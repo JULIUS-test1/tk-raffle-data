@@ -1,6 +1,30 @@
 @import "tailwindcss";
 @plugin "flowbite/plugin";
 
+@theme {
+  --color-warm-red: #d14124;
+  --color-warm-red-h: #a03f40;
+  --color-red-1: #dc573c;
+  --color-maroon: #8a2a2b;
+  --color-c-beige: #ede5d2;
+  --color-c-brass: #b47e00;
+  --color-c-white: #f4f2ec;
+}
+
+@font-face {
+  font-family: "Squad-Heavy";
+  src: url("./font/Fontfabric-Squad-Heavy.woff2");
+}
+@font-face {
+  font-family: "Squad-Bold";
+  src: url("./font/Fontfabric-Squad-Bold.woff2");
+}
+
+body {
+  font-family: "Squad-Bold";
+  background: #ede5d2;
+}
+
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
   display: none;
