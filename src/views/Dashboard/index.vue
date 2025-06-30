@@ -93,6 +93,7 @@
           />
 
           <button
+            v-if="searchQuery"
             @click="searchQuery = ''"
             type="button"
             class="absolute end-20 top-1/2 -translate-y-1/2 text-c-beige text-md cursor-pointer"
@@ -183,13 +184,6 @@
           />
         </div>
       </div>
-
-      <button
-        type="submit"
-        class="text-white mt-4 bg-red-1 sm:mt-auto hover:bg-warm-red-h focus:ring-1 focus:outline-none focus:ring-c-beige font-medium rounded text-sm px-10 py-3 cursor-pointer"
-      >
-        Search
-      </button>
     </div>
 
     <table
