@@ -29,15 +29,15 @@
     <div class="flex items-center gap-x-7 px-3">
       <div
         class="text-c-beige border-b-[3px] px-1 w-fit cursor-pointer pb-1"
-        :class="activeTab == 0 ? 'border-c-beige' : 'border-transparent'"
-        @click="activeTab = 0"
+        :class="modelValue == 0 ? 'border-c-beige' : 'border-transparent'"
+        @click="$emit('update:modelValue', 0)"
       >
         Raffle Entries
       </div>
       <div
         class="text-c-beige border-b-[3px] px-1 w-fit cursor-pointer pb-1"
-        :class="activeTab == 1 ? 'border-c-beige' : 'border-transparent'"
-        @click="activeTab = 1"
+        :class="modelValue == 1 ? 'border-c-beige' : 'border-transparent'"
+        @click="$emit('update:modelValue', 1)"
       >
         Pick Winners
       </div>
@@ -46,9 +46,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-
-const activeTab = ref(0);
+defineProps(["modelValue"]);
+defineEmits(["update:modelValue"]);
 </script>
-
-<style lang="scss" scoped></style>

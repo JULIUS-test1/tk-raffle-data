@@ -1,5 +1,5 @@
 <template>
-  <main class="w-full sm:pb-10">
+  <main class="w-full">
     <router-view />
   </main>
 </template>
