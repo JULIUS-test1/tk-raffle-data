@@ -1,37 +1,41 @@
 <template>
-  <div class="mx-auto">
-    <div class="flex shrink-0 w-fit">
-      <div
-        v-for="(item, idx) in keysArray"
-        :key="idx"
-        class="px-1 py-3 text-xs shrink-0 font-sb !uppercase leading-5 items-center flex !text-maroon border-b-2 border-maroon"
-        :class="formatWidth(item)"
-      >
-        {{ item == "Submitted at" ? "Date Submitted" : item }}
-      </div>
-    </div>
-
-    <div v-if="filteredData?.length" class="h-[600px] overflow-y-auto">
-      <div
-        class="flex shrink-0 my-3 w-fit rounded-md bg-c-white"
-        v-for="(entry, index) in paginatedItems"
-        :key="index"
-      >
+  <template v-if="!isLoading">
+    <div v-if="filteredData?.length" class="mx-auto overflow-y-auto">
+      <div class="flex w-fit">
         <div
           v-for="(item, idx) in keysArray"
           :key="idx"
-          class="px-1 py-3 text-xs shrink-0 font-sb leading-5 flex text-maroon break-all"
+          class="px-1 py-3 text-xs shrink-0 font-sb !uppercase leading-5 items-center flex !text-maroon border-b-2 border-maroon"
           :class="formatWidth(item)"
         >
-          <span
-            v-if="item == 'Upload Receipt'"
-            class="cursor-pointer"
-            @click="handleViewImage(entry['Upload Receipt'])"
-          >
-            View
-          </span>
+          {{ item == "Submitted at" ? "Date Submitted" : item }}
+        </div>
+      </div>
 
-          {{ item == "id" ? formatId(index) : formatItemDisplay(item, entry) }}
+      <div class="h-[600px]">
+        <div
+          class="flex my-3 w-fit rounded-md bg-c-white"
+          v-for="(entry, index) in paginatedItems"
+          :key="index"
+        >
+          <div
+            v-for="(item, idx) in keysArray"
+            :key="idx"
+            class="px-1 py-3 text-xs shrink-0 font-sb leading-5 flex text-maroon break-all"
+            :class="formatWidth(item)"
+          >
+            <span
+              v-if="item == 'Upload Receipt'"
+              class="cursor-pointer"
+              @click="handleViewImage(entry['Upload Receipt'])"
+            >
+              View
+            </span>
+
+            {{
+              item == "id" ? formatId(index) : formatItemDisplay(item, entry)
+            }}
+          </div>
         </div>
       </div>
     </div>
@@ -59,71 +63,75 @@
         Try adjusting your filters or search term.
       </p>
     </div>
-  </div>
 
-  <!-- Pagination UI -->
-  <div
-    v-if="filteredData?.length"
-    class="flex justify-center items-center gap-1 text-sm"
-  >
-    <!-- Previous Button -->
-    <button
-      @click="goToPage(currentPage - 1)"
-      :disabled="currentPage === 1"
-      class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+    <!-- Pagination UI -->
+    <div
+      v-if="filteredData?.length"
+      class="flex justify-center items-center gap-1 text-sm mt-5"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-4 h-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+      <!-- Previous Button -->
+      <button
+        @click="goToPage(currentPage - 1)"
+        :disabled="currentPage === 1"
+        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M15 19l-7-7 7-7"
-        />
-      </svg>
-    </button>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
 
-    <!-- Page Numbers -->
-    <button
-      v-for="page in pagesToShow"
-      :key="page"
-      @click="goToPage(page)"
-      :class="[
-        'px-3 py-1 rounded transition',
-        page === currentPage
-          ? 'bg-blue-600 text-white font-bold'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-      ]"
-    >
-      {{ page }}
-    </button>
-
-    <!-- Next Button -->
-    <button
-      @click="goToPage(currentPage + 1)"
-      :disabled="currentPage === totalPages"
-      class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-4 h-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+      <!-- Page Numbers -->
+      <button
+        v-for="page in pagesToShow"
+        :key="page"
+        @click="goToPage(page)"
+        :class="[
+          'px-3 py-1 rounded transition',
+          page === currentPage
+            ? 'bg-blue-600 text-white font-bold'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+        ]"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9 5l7 7-7 7"
-        />
-      </svg>
-    </button>
+        {{ page }}
+      </button>
+
+      <!-- Next Button -->
+      <button
+        @click="goToPage(currentPage + 1)"
+        :disabled="currentPage === totalPages"
+        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+    </div>
+  </template>
+
+  <div v-else class="h-[600px] w-full flex items-center justify-center">
+    <div class="loader text-warm-red"></div>
   </div>
 
   <!-- Popup Modal -->
@@ -156,7 +164,7 @@ import {
   formatToPeso,
 } from "../../../utils/utils";
 
-const props = defineProps(["filteredData", "keysArray"]);
+const props = defineProps(["filteredData", "keysArray", "isLoading"]);
 
 const formatId = (index) => {
   return (currentPage.value - 1) * itemsPerPage + index + 1;
@@ -193,11 +201,11 @@ const formatWidth = (itemName) => {
     case "Branch":
       return "w-[200px]";
     case "Date of Purchase":
-      return "w-[80px] justify-center text-center";
+      return "w-[100px] justify-center text-center";
     case "Purchase Amount":
       return "w-[130px]";
     case "Receipt / Invoice Number":
-      return "w-[120px]";
+      return "w-[110px]";
     case "Upload Receipt":
       return "w-[70px] justify-center text-center text-warm-red";
     case "Submitted at":
@@ -250,3 +258,22 @@ function goToPage(page) {
   }
 }
 </script>
+
+<style scoped>
+.loader {
+  width: fit-content;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 30px;
+  clip-path: inset(0 3ch 0 0);
+  animation: l4 1s steps(4) infinite;
+}
+.loader:before {
+  content: "Loading...";
+}
+@keyframes l4 {
+  to {
+    clip-path: inset(0 -1ch 0 0);
+  }
+}
+</style>

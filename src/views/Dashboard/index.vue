@@ -18,6 +18,7 @@
       v-if="activeTab == 0"
       :filteredData="filteredData"
       :keysArray="keysArray"
+      :isLoading="isLoading"
     />
 
     <div
@@ -93,6 +94,7 @@ import {
   formatMobileNumber,
 } from "../../utils/utils";
 
+const isLoading = ref(true);
 const activeTab = ref(0);
 const tableData = ref([]);
 const filteredData = ref([]);
@@ -130,6 +132,7 @@ onMounted(async () => {
       complete: (results) => {
         tableData.value = results.data;
         filteredData.value = results.data;
+        isLoading.value = false;
       },
     });
   } catch (err) {
