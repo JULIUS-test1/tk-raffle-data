@@ -26,13 +26,23 @@
       <select
         :value="modelValue"
         id="branch-filter"
-        class="block w-full p-3 ps-10 text-sm text-c-beige border border-transparent rounded focus:ring-c-beige focus:outline-none focus:border-c-beige cursor-pointer"
+        class="block w-full p-3 pt-3.5 pb-2.5 ps-8 text-sm text-c-beige border border-transparent rounded focus:ring-c-beige focus:outline-none focus:border-c-beige cursor-pointer"
         @change="$emit('update:modelValue', $event.target.value)"
       >
+        <option disabled value="">Select a branch</option>
         <option v-for="branch in uniqueBranches" :key="branch" :value="branch">
           {{ branch }}
         </option>
       </select>
+
+      <button
+        v-if="modelValue"
+        @click="$emit('update:modelValue', '')"
+        type="button"
+        class="absolute right-3 top-1/2 pt-1 -translate-y-1/2 text-c-beige cursor-pointer leading-none"
+      >
+        ✕
+      </button>
     </div>
   </div>
 </template>

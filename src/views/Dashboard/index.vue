@@ -94,7 +94,7 @@ import {
 } from "../../utils/utils";
 
 const activeTab = ref(0);
-const sheetData = ref([]);
+const tableData = ref([]);
 const filteredData = ref([]);
 const searchQuery = ref("");
 const selectedBranch = ref("");
@@ -128,7 +128,7 @@ onMounted(async () => {
       header: true, // assumes first row is column names
       skipEmptyLines: true,
       complete: (results) => {
-        sheetData.value = results.data;
+        tableData.value = results.data;
         filteredData.value = results.data;
       },
     });
@@ -138,37 +138,38 @@ onMounted(async () => {
 });
 
 const uniqueBranches = computed(() => {
-  const allBranches = sheetData.value.map((entry) => entry["Branch"]);
+  const allBranches = tableData.value.map((entry) => entry["Branch"]);
   return [...new Set(allBranches)].filter(Boolean); // remove duplicates and falsy values
 });
 
 watch(searchQuery, (nV, oV) => {
   if (!nV) {
-    return (filteredData.value = sheetData.value);
+    return (filteredData.value = tableData.value);
   }
 });
 
 watch(selectedBranch, (nV, oV) => {
   if (!nV) {
-    return (filteredData.value = sheetData.value);
+    return (filteredData.value = tableData.value);
   }
-
-  console.log(nV);
 
   searchQuery.value = "";
   selectedDate.value = null;
 
-  return (filteredData.value = sheetData.value.filter(
+  return (filteredData.value = filteredData.value.filter(
     (entry) => entry["Branch"]?.trim() === selectedBranch.value.trim()
   ));
 });
 
 watch(selectedDate, (nV, oV) => {
   if (!nV) {
-    return (filteredData.value = sheetData.value);
+    return (filteredData.value = tableData.value);
   }
 
-  return (filteredData.value = sheetData.value.filter((item) => {
+  searchQuery.value = "";
+  selectedBranch.value = "";
+
+  return (filteredData.value = filteredData.value.filter((item) => {
     const submittedDate = convertUTCtoPH(item["Submitted at"]).split(" ")[0];
     return submittedDate === formatDate(nV);
   }));
@@ -177,7 +178,7 @@ watch(selectedDate, (nV, oV) => {
 const handleSearch = () => {
   const search = searchQuery.value.toLowerCase().trim();
 
-  filteredData.value = sheetData.value.filter((entry) => {
+  filteredData.value = tableData.value.filter((entry) => {
     if (!search) return true;
 
     // selectedBranch.value = "";
@@ -198,13 +199,13 @@ function handleLogout() {
 const winner = ref(null);
 
 const pickRandomWinner = () => {
-  if (!sheetData.value.length) {
+  if (!tableData.value.length) {
     winner.value = null;
     return;
   }
 
-  const randomIndex = Math.floor(Math.random() * sheetData.value.length);
-  winner.value = sheetData.value[randomIndex];
+  const randomIndex = Math.floor(Math.random() * tableData.value.length);
+  winner.value = tableData.value[randomIndex];
 };
 </script>
 

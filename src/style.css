@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "flowbite/plugin";
 
 @theme {
   --color-warm-red: #d14124;

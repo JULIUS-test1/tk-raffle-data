@@ -27,7 +27,7 @@
         type="search"
         :value="modelValue"
         id="default-search"
-        class="block w-full p-3 ps-10 pe-26 text-sm text-c-beige placeholder-c-beige border-transparent rounded bg-red-1 focus:ring-c-beige focus:border-c-beige"
+        class="block w-full px-3 h-[45px] ps-10 pe-26 text-sm text-c-beige placeholder-c-beige border-transparent rounded bg-red-1 focus:ring-c-beige focus:outline-c-beige focus:outline-1"
         placeholder="Search for name, address etc."
         required
         @input="$emit('update:modelValue', $event.target.value)"
