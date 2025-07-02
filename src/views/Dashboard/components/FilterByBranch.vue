@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col grow mt-5">
+  <div class="flex flex-col flex-1 mt-5">
     <p class="text-c-beige mb-1 text-md">Filter by branch</p>
 
     <div class="relative w-full">
@@ -26,7 +26,7 @@
       <select
         :value="modelValue"
         id="branch-filter"
-        class="block w-full p-3 pt-3.5 pb-2.5 ps-8 text-sm text-c-beige border border-transparent rounded focus:ring-c-beige focus:outline-none focus:border-c-beige cursor-pointer"
+        class="block w-full p-3 pt-3.5 pb-2.5 ps-8 pe-8 text-sm text-c-beige border border-transparent rounded focus:ring-c-beige focus:outline-none focus:border-c-beige cursor-pointer"
         @change="$emit('update:modelValue', $event.target.value)"
       >
         <option disabled value="">Select a branch</option>

@@ -1,14 +1,16 @@
 <template>
-  <div class="flex flex-col grow mt-5">
+  <div class="flex flex-col flex-1 mt-5">
     <p class="text-c-beige mb-1 text-md">Filter by date submitted</p>
 
-    <VueDatePicker
-      :auto-apply="true"
-      :model-value="modelValue"
-      :enable-time-picker="false"
-      placeholder="Pick a date"
-      @update:model-value="$emit('update:modelValue', $event)"
-    />
+    <div class="relative w-full">
+      <VueDatePicker
+        :auto-apply="true"
+        :model-value="modelValue"
+        :enable-time-picker="false"
+        placeholder="Pick a date"
+        @update:model-value="$emit('update:modelValue', $event)"
+      />
+    </div>
   </div>
 </template>
 
