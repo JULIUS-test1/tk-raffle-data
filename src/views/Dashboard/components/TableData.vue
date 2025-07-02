@@ -1,17 +1,17 @@
 <template>
   <div class="mx-auto">
-    <div class="flex">
+    <div class="flex shrink-0 w-fit">
       <div
         v-for="(item, idx) in keysArray"
         :key="idx"
-        class="outline1 px-1 py-3 text-xs shrink-0 font-sb !uppercase leading-5 items-center flex !text-maroon border-b-2 border-maroon"
+        class="px-1 py-3 text-xs shrink-0 font-sb !uppercase leading-5 items-center flex !text-maroon border-b-2 border-maroon"
         :class="formatWidth(item)"
       >
         {{ item == "Submitted at" ? "Date Submitted" : item }}
       </div>
     </div>
 
-    <div class="h-[600px] overflow-y-auto">
+    <div v-if="filteredData?.length" class="h-[600px] overflow-y-auto">
       <div
         class="flex shrink-0 my-3 w-fit rounded-md bg-c-white"
         v-for="(entry, index) in paginatedItems"
@@ -20,7 +20,7 @@
         <div
           v-for="(item, idx) in keysArray"
           :key="idx"
-          class="outline1 px-1 py-3 text-xs shrink-0 font-sb leading-5 flex text-maroon break-all"
+          class="px-1 py-3 text-xs shrink-0 font-sb leading-5 flex text-maroon break-all"
           :class="formatWidth(item)"
         >
           <span
@@ -31,18 +31,41 @@
             View
           </span>
 
-          {{
-            item == "id"
-              ? (currentPage - 1) * itemsPerPage + index + 1
-              : formatItemDisplay(item, entry)
-          }}
+          {{ item == "id" ? formatId(index) : formatItemDisplay(item, entry) }}
         </div>
       </div>
+    </div>
+
+    <div
+      v-else
+      class="flex h-[600px] flex-col items-center justify-center py-16 text-center"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-20 h-20 mb-6 text-warm-red"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M21 21l-4.35-4.35m0 0A7 7 0 103.6 9.6a7 7 0 0013.05 7.05z"
+        />
+      </svg>
+      <p class="text-3xl text-warm-red mb-2">No results found</p>
+      <p class="text-lg text-maroon">
+        Try adjusting your filters or search term.
+      </p>
     </div>
   </div>
 
   <!-- Pagination UI -->
-  <div class="flex justify-center items-center gap-1 text-sm">
+  <div
+    v-if="filteredData?.length"
+    class="flex justify-center items-center gap-1 text-sm"
+  >
     <!-- Previous Button -->
     <button
       @click="goToPage(currentPage - 1)"
@@ -134,6 +157,10 @@ import {
 } from "../../../utils/utils";
 
 const props = defineProps(["filteredData", "keysArray"]);
+
+const formatId = (index) => {
+  return (currentPage.value - 1) * itemsPerPage + index + 1;
+};
 
 const formatItemDisplay = (itemName, entry) => {
   if (itemName == "No. Of Entries") {
