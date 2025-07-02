@@ -13,7 +13,7 @@
 
     <div class="h-[600px] overflow-y-auto">
       <div
-        class="flex shrink-0 my-3 rounded-md overflow-hidden bg-c-white"
+        class="flex shrink-0 my-3 w-fit rounded-md bg-c-white"
         v-for="(entry, index) in paginatedItems"
         :key="index"
       >
