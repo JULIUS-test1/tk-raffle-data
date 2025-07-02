@@ -1,7 +1,7 @@
 <template>
   <HeaderComponent v-model="activeTab" />
 
-  <main class="px-4 sm:px-10">
+  <main class="px-4 sm:px-10 pb-20">
     <div class="bg-warm-red rounded mt-3 p-4 flex gap-x-4 flex-col">
       <SearchInput v-model="searchQuery" @handleSearch="handleSearch" />
 
