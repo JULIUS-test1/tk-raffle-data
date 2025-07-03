@@ -48,7 +48,7 @@
             </div>
             <button
               class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(info)"
+              @click="handleViewInfo(item.name)"
             >
               view
             </button>
@@ -86,7 +86,7 @@
             </div>
             <button
               class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(info)"
+              @click="handleViewInfo(item.name)"
             >
               view
             </button>
@@ -124,7 +124,7 @@
             </div>
             <button
               class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(info)"
+              @click="handleViewInfo(item.name)"
             >
               view
             </button>
@@ -162,7 +162,7 @@
             </div>
             <button
               class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(info)"
+              @click="handleViewInfo(item.name)"
             >
               view
             </button>
@@ -200,7 +200,7 @@
           </div>
           <button
             class="cursor-pointer hover:text-warm-red hover:underline"
-            @click="handleViewInfo(info)"
+            @click="handleViewInfo(item.name)"
           >
             view
           </button>
@@ -223,6 +223,25 @@
     <!-- <div v-else class="h-[600px] w-full flex items-center justify-center">
       <div class="loader text-warm-red"></div>
     </div> -->
+
+    <!-- Popup Modal -->
+    <!-- <div
+      v-if="showPopup"
+      class="fixed inset-0 bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150 flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white py-5 px-12 rounded-lg relative shadow-xl h-[90%] w-[600px] flex items-center justify-center"
+      >
+        <button
+          @click="showPopup = false"
+          class="absolute top-3 right-4 text-black text-xl font-bold cursor-pointer"
+        >
+          ✕
+        </button>
+
+        <div>1</div>
+      </div>
+    </div> -->
   </div>
 </template>
 
@@ -233,6 +252,8 @@ const props = defineProps(['isLoading', 'tableData']);
 const emit = defineEmits(['update:isLoading']);
 
 const showEntries = ref(false);
+const showPopup = ref(false);
+const userViewInfo = ref({});
 const allEntries = ref([]);
 const drawnRounds = ref([]); // ⬅️ This stores all draw batches
 
@@ -348,5 +369,10 @@ const formatBgColor = (roundName) => {
     case 'final':
       return '!bg-winner';
   }
+};
+
+const handleViewInfo = (name) => {
+  userViewInfo.value = props.tableData.find((_) => _['Full Name'] == name);
+  showPopup.value = true;
 };
 </script>
