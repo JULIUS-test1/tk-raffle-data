@@ -15,14 +15,14 @@
 </template>
 
 <script setup>
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "../../../../node_modules/@vuepic/vue-datepicker/dist/main.css";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '../../../../node_modules/@vuepic/vue-datepicker/dist/main.css';
 
 defineProps({
   modelValue: [Date, String, null],
 });
 
-defineEmits(["update:modelValue"]);
+defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>
@@ -30,7 +30,7 @@ defineEmits(["update:modelValue"]);
   height: 45px !important;
   background: #dc573c !important;
   color: #f5f5dc !important;
-  font-family: "Squad-Bold" !important;
+  font-family: 'Squad-Bold' !important;
   font-size: 0.875rem !important;
   outline: none;
   border: none !important;

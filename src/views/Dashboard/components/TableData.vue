@@ -1,6 +1,9 @@
 <template>
   <template v-if="!isLoading">
-    <div v-if="filteredData?.length" class="mx-auto overflow-y-auto">
+    <div
+      v-if="filteredData?.length"
+      class="mx-auto px-4 sm:px-10 w-fit overflow-y-auto"
+    >
       <div class="flex w-fit">
         <div
           v-for="(item, idx) in keysArray"
@@ -8,7 +11,7 @@
           class="px-1 py-3 text-xs shrink-0 font-sb !uppercase leading-5 items-center flex !text-maroon border-b-2 border-maroon"
           :class="formatWidth(item)"
         >
-          {{ item == "Submitted at" ? "Date Submitted" : item }}
+          {{ item == 'Submitted at' ? 'Date Submitted' : item }}
         </div>
       </div>
 
@@ -26,14 +29,14 @@
           >
             <span
               v-if="item == 'Upload Receipt'"
-              class="cursor-pointer"
+              class="cursor-pointer underline"
               @click="handleViewImage(entry['Upload Receipt'])"
             >
-              View
+              view
             </span>
 
             {{
-              item == "id" ? formatId(index) : formatItemDisplay(item, entry)
+              item == 'id' ? formatId(index) : formatItemDisplay(item, entry)
             }}
           </div>
         </div>
@@ -73,7 +76,7 @@
       <button
         @click="goToPage(currentPage - 1)"
         :disabled="currentPage === 1"
-        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50 cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -97,9 +100,9 @@
         :key="page"
         @click="goToPage(page)"
         :class="[
-          'px-3 py-1 rounded transition',
+          'h-8 w-8 rounded flex items-center justify-center pt-[2px] transition cursor-pointer',
           page === currentPage
-            ? 'bg-blue-600 text-white font-bold'
+            ? 'bg-warm-red text-white font-bold'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
         ]"
       >
@@ -110,7 +113,7 @@
       <button
         @click="goToPage(currentPage + 1)"
         :disabled="currentPage === totalPages"
-        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50 cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -155,66 +158,67 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-
+import { ref, computed } from 'vue';
 import {
+  formatDate,
   calculateEntries,
   formatMobileNumber,
   convertUTCtoPH,
   formatToPeso,
-} from "../../../utils/utils";
+} from '../../../utils/utils';
 
-const props = defineProps(["filteredData", "keysArray", "isLoading"]);
+const props = defineProps(['filteredData', 'keysArray', 'isLoading']);
 
 const formatId = (index) => {
   return (currentPage.value - 1) * itemsPerPage + index + 1;
 };
 
 const formatItemDisplay = (itemName, entry) => {
-  if (itemName == "No. Of Entries") {
-    return calculateEntries(entry["Purchase Amount"]);
+  if (itemName == 'No. Of Entries') {
+    return calculateEntries(entry['Purchase Amount']);
   }
-  if (itemName == "Mobile Number") return formatMobileNumber(entry[itemName]);
-  if (itemName == "Purchase Amount") return formatToPeso(entry[itemName]);
-  if (itemName == "Submitted at") return convertUTCtoPH(entry[itemName]);
-  if (itemName == "Upload Receipt") return "";
+  if (itemName == 'Mobile Number') return formatMobileNumber(entry[itemName]);
+  if (itemName == 'Birthdate') return formatDate(entry[itemName]);
+  if (itemName == 'Purchase Amount') return formatToPeso(entry[itemName]);
+  if (itemName == 'Submitted at') return convertUTCtoPH(entry[itemName]);
+  if (itemName == 'Upload Receipt') return '';
 
   return entry[itemName];
 };
 
 const formatWidth = (itemName) => {
   switch (itemName) {
-    case "id":
-      return "w-[40px] justify-center";
-    case "No. Of Entries":
-      return "w-[80px] justify-center text-center";
-    case "Full Name":
-      return "w-[210px]";
-    case "Mobile Number":
-      return "w-[100px] justify-center";
-    case "Email Address":
-      return "w-[140px]";
-    case "Birthdate":
-      return "w-[80px] justify-center";
-    case "Residential Address":
-      return "w-[200px]";
-    case "Branch":
-      return "w-[200px]";
-    case "Date of Purchase":
-      return "w-[100px] justify-center text-center";
-    case "Purchase Amount":
-      return "w-[130px]";
-    case "Receipt / Invoice Number":
-      return "w-[110px]";
-    case "Upload Receipt":
-      return "w-[70px] justify-center text-center text-warm-red";
-    case "Submitted at":
-      return "w-[150px] justify-center";
+    case 'id':
+      return 'w-[40px] justify-center';
+    case 'No. Of Entries':
+      return 'w-[80px] justify-center text-center';
+    case 'Full Name':
+      return 'w-[210px]';
+    case 'Mobile Number':
+      return 'w-[100px] justify-center';
+    case 'Email Address':
+      return 'w-[140px]';
+    case 'Birthdate':
+      return 'w-[80px] justify-center';
+    case 'Residential Address':
+      return 'w-[200px]';
+    case 'Branch':
+      return 'w-[200px]';
+    case 'Date of Purchase':
+      return 'w-[100px] justify-center text-center';
+    case 'Purchase Amount':
+      return 'w-[130px]';
+    case 'Receipt / Invoice Number':
+      return 'w-[110px]';
+    case 'Upload Receipt':
+      return 'w-[70px] justify-center text-center text-warm-red';
+    case 'Submitted at':
+      return 'w-[150px] justify-center';
   }
 };
 
 const showPopup = ref(false);
-const imageSrc = ref("");
+const imageSrc = ref('');
 
 const handleViewImage = (imgSrc) => {
   imageSrc.value = imgSrc;
@@ -269,7 +273,7 @@ function goToPage(page) {
   animation: l4 1s steps(4) infinite;
 }
 .loader:before {
-  content: "Loading...";
+  content: 'Loading...';
 }
 @keyframes l4 {
   to {

@@ -55,6 +55,6 @@
 </template>
 
 <script setup>
-defineProps(["modelValue"]);
-defineEmits(["update:modelValue", "handleSearch"]);
+defineProps(['modelValue']);
+defineEmits(['update:modelValue', 'handleSearch']);
 </script>

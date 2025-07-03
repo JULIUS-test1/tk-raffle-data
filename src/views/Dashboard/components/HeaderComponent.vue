@@ -46,6 +46,6 @@
 </template>
 
 <script setup>
-defineProps(["modelValue"]);
-defineEmits(["update:modelValue"]);
+defineProps(['modelValue']);
+defineEmits(['update:modelValue']);
 </script>

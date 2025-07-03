@@ -48,8 +48,8 @@
 </template>
 
 <script setup>
-defineProps(["modelValue", "uniqueBranches"]);
-defineEmits(["update:modelValue"]);
+defineProps(['modelValue', 'uniqueBranches']);
+defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>
