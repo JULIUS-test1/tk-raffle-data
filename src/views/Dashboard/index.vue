@@ -1,83 +1,75 @@
 <template>
-  <HeaderComponent v-model="activeTab" />
+  <!-- <HeaderComponent v-model="activeTab" /> -->
+
+  <header
+    class="min-h-30 bg-warm-red px-4 sm:px-10 pt-4 flex flex-col justify-between pb-[2px] shadow-2xs w-full"
+  >
+    <div class="flex justify-between">
+      <img src="/src/assets/tpk-logo-white.png" alt="tpk-logo" class="w-40" />
+
+      <button
+        @click="handleLogout"
+        class="flex items-center space-x-2 text-c-beige cursor-pointer"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-7 h-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-x-7 px-3">
+      <div
+        class="text-c-beige border-b-[3px] px-1 w-fit cursor-pointer pb-1"
+        :class="activeTab == 0 ? 'border-c-beige' : 'border-transparent'"
+        @click="handleChangeTab(0)"
+      >
+        Raffle Entries
+      </div>
+      <div
+        class="text-c-beige border-b-[3px] px-1 w-fit cursor-pointer pb-1"
+        :class="activeTab == 1 ? 'border-c-beige' : 'border-transparent'"
+        @click="handleChangeTab(1)"
+      >
+        Pick Winners
+      </div>
+    </div>
+  </header>
 
   <main class="pb-20">
-    <div
-      class="bg-warm-red mx-4 sm:mx-10 rounded mt-3 p-4 flex gap-x-4 flex-col"
-    >
-      <SearchInput v-model="searchQuery" @handleSearch="handleSearch" />
-
-      <div class="md:flex-row flex-col flex gap-x-4">
-        <FilterByBranch
-          v-model="selectedBranch"
-          :uniqueBranches="uniqueBranches"
-        />
-        <FilterByDate v-model="selectedDate" />
-      </div>
-    </div>
-
-    <TableData
-      v-if="activeTab == 0"
-      :filteredData="filteredData"
-      :keysArray="keysArray"
-      :isLoading="isLoading"
-    />
-
-    <div
-      class="h-screen flex flex-col items-center justify-center"
-      v-if="activeTab == 1"
-    >
-      <!-- Button to Pick Winner -->
-      <div class="text-center my-6">
-        <button
-          @click="pickRandomWinner"
-          class="bg-warm-red hover:bg-warm-red-h text-white font-bold py-2 px-6 rounded-lg shadow cursor-pointer"
-        >
-          Pick Random Winner
-        </button>
-      </div>
-
-      <!-- Winner Display -->
+    <template v-if="activeTab == 0">
       <div
-        v-if="winner"
-        class="mt-4 rounded-md p-4 bg-green-50 max-w-md mx-auto shadow-2xs mb-20"
+        class="bg-warm-red mx-4 sm:mx-10 rounded mt-3 p-4 flex gap-x-4 flex-col"
       >
-        <h2 class="text-lg font-bold mb-2 text-warm-red">
-          🎉 Winner Selected!
-        </h2>
-        <p class="text-maroon">
-          <strong>Full Name:</strong> {{ winner['Full Name'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Mobile Number:</strong>
-          {{ formatMobileNumber(winner['Mobile Number']) }}
-        </p>
-        <p class="text-maroon">
-          <strong>Email Address:</strong> {{ winner['Email Address'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Birthdate:</strong> {{ winner['Birthdate'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Residential Address:</strong>
-          {{ winner['Residential Address'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Branch:</strong> {{ winner['Branch'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Date of Purchase:</strong> {{ winner['Date of Purchase'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Receipt / Invoice Number:</strong>
-          {{ winner['Receipt / Invoice Number'] }}
-        </p>
-        <p class="text-maroon">
-          <strong>Date Submitted</strong>
-          {{ convertUTCtoPH(winner['Submitted at']) }}
-        </p>
+        <SearchInput v-model="searchQuery" @handleSearch="handleSearch" />
+
+        <div class="md:flex-row flex-col flex gap-x-4">
+          <FilterByBranch
+            v-model="selectedBranch"
+            :uniqueBranches="uniqueBranches"
+          />
+          <FilterByDate v-model="selectedDate" />
+        </div>
       </div>
-    </div>
+
+      <TableData :isLoading="isLoading" :filteredData="filteredData" />
+    </template>
+
+    <RaffleData
+      v-if="activeTab == 1"
+      :isLoading="isLoading"
+      :tableData="tableData"
+    />
   </main>
 </template>
 
@@ -87,14 +79,11 @@ import SearchInput from './components/SearchInput.vue';
 import FilterByBranch from './components/FilterByBranch.vue';
 import FilterByDate from './components/FilterByDate.vue';
 import TableData from './components/TableData.vue';
+import RaffleData from './components/RaffleData.vue';
 import Papa from 'papaparse';
 import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  convertUTCtoPH,
-  formatDate,
-  formatMobileNumber,
-} from '../../utils/utils';
+import { convertUTCtoPH, formatDate } from '../../utils/utils';
 
 const isLoading = ref(true);
 const activeTab = ref(0);
@@ -103,22 +92,6 @@ const filteredData = ref([]);
 const searchQuery = ref('');
 const selectedBranch = ref('');
 const selectedDate = ref(null);
-
-const keysArray = ref([
-  'id',
-  'No. Of Entries',
-  'Full Name',
-  'Mobile Number',
-  'Email Address',
-  'Birthdate',
-  'Residential Address',
-  'Branch',
-  'Date of Purchase',
-  'Purchase Amount',
-  'Receipt / Invoice Number',
-  'Upload Receipt',
-  'Submitted at',
-]);
 
 onMounted(async () => {
   try {
@@ -140,11 +113,6 @@ onMounted(async () => {
   } catch (err) {
     console.error('Error fetching/parsing CSV:', err);
   }
-});
-
-const uniqueBranches = computed(() => {
-  const allBranches = tableData.value.map((entry) => entry['Branch']);
-  return [...new Set(allBranches)].filter(Boolean); // remove duplicates and falsy values
 });
 
 watch(searchQuery, (nV, oV) => {
@@ -180,6 +148,11 @@ watch(selectedDate, (nV, oV) => {
   }));
 });
 
+const uniqueBranches = computed(() => {
+  const allBranches = tableData.value.map((entry) => entry['Branch']);
+  return [...new Set(allBranches)].filter(Boolean); // remove duplicates and falsy values
+});
+
 const handleSearch = () => {
   const search = searchQuery.value.toLowerCase().trim();
 
@@ -211,6 +184,16 @@ const pickRandomWinner = () => {
 
   const randomIndex = Math.floor(Math.random() * tableData.value.length);
   winner.value = tableData.value[randomIndex];
+};
+
+const handleViewInfo = (info) => {
+  console.log(1);
+};
+
+const handleChangeTab = (i) => {
+  activeTab.value = i;
+  if (isLoading.value) return;
+  isLoading.value = true;
 };
 </script>
 

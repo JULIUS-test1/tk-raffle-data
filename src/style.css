@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-warm-red: #d14124;
@@ -9,24 +9,51 @@
   --color-c-brass: #b47e00;
   --color-c-white: #f4f2ec;
 
-  --font-sb: "Squad-Bold";
+  --font-sb: 'Squad-Bold';
+
+  --color-first: #d1f7c4;
+  --color-second: #ffe2e2;
+  --color-third: #d6eeff;
+  --color-fourth: #f6b980;
+  --color-winner: #ffd66b;
 }
 
 @font-face {
-  font-family: "Squad-Heavy";
-  src: url("./font/Fontfabric-Squad-Heavy.woff2");
+  font-family: 'Squad-Heavy';
+  src: url('./font/Fontfabric-Squad-Heavy.woff2');
 }
 @font-face {
-  font-family: "Squad-Bold";
-  src: url("./font/Fontfabric-Squad-Bold.woff2");
+  font-family: 'Squad-Bold';
+  src: url('./font/Fontfabric-Squad-Bold.woff2');
 }
 
 body {
-  font-family: "Squad-Bold";
+  font-family: 'Squad-Bold';
   background: #ede5d2;
 }
 
-input[type="search"]::-webkit-search-cancel-button {
+input[type='search']::-webkit-search-cancel-button {
   -webkit-appearance: none;
   display: none;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.loader {
+  width: fit-content;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 30px;
+  clip-path: inset(0 3ch 0 0);
+  animation: l4 1s steps(4) infinite;
+}
+.loader:before {
+  content: 'Loading...';
+}
+@keyframes l4 {
+  to {
+    clip-path: inset(0 -1ch 0 0);
+  }
 }

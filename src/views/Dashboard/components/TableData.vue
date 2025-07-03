@@ -167,7 +167,23 @@ import {
   formatToPeso,
 } from '../../../utils/utils';
 
-const props = defineProps(['filteredData', 'keysArray', 'isLoading']);
+const props = defineProps(['isLoading', 'filteredData']);
+
+const keysArray = ref([
+  'id',
+  'No. Of Entries',
+  'Full Name',
+  'Mobile Number',
+  'Email Address',
+  'Birthdate',
+  'Residential Address',
+  'Branch',
+  'Date of Purchase',
+  'Purchase Amount',
+  'Receipt / Invoice Number',
+  'Upload Receipt',
+  'Submitted at',
+]);
 
 const formatId = (index) => {
   return (currentPage.value - 1) * itemsPerPage + index + 1;
@@ -262,22 +278,3 @@ function goToPage(page) {
   }
 }
 </script>
-
-<style scoped>
-.loader {
-  width: fit-content;
-  font-weight: bold;
-  font-family: monospace;
-  font-size: 30px;
-  clip-path: inset(0 3ch 0 0);
-  animation: l4 1s steps(4) infinite;
-}
-.loader:before {
-  content: 'Loading...';
-}
-@keyframes l4 {
-  to {
-    clip-path: inset(0 -1ch 0 0);
-  }
-}
-</style>
