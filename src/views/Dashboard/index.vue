@@ -174,7 +174,7 @@ watch(selectedDate, (nV, oV) => {
 
   return (filteredData.value = filteredData.value.filter((item) => {
     const submittedDate = convertUTCtoPH(item["Submitted at"]).split(" ")[0];
-    return submittedDate === formatDate(nV);
+    return submittedDate === nV;
   }));
 });
 
