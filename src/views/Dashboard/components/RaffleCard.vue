@@ -19,7 +19,7 @@
         </div>
         <button
           class="hover:text-warm-red cursor-pointer hover:underline"
-          @click="handleViewInfo(item.name)"
+          @click="$emit('handleViewInfo', item.name)"
         >
           view
         </button>
@@ -54,7 +54,7 @@ const props = defineProps([
   'roundWinners',
 ]);
 
-defineEmits(['drawWinners']);
+defineEmits(['drawWinners', 'handleViewInfo']);
 
 const formatBg = () => {
   if (!props.roundWinners) return;

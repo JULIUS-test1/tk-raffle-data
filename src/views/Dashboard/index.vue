@@ -41,7 +41,7 @@ import { onMounted, ref, computed, watch } from 'vue';
 import { convertUTCtoPH, formatDate } from '../../utils/utils';
 
 const isLoading = ref(false);
-const activeTab = ref(1);
+const activeTab = ref(0);
 const tableData = ref([]);
 const filteredData = ref([]);
 const searchQuery = ref('');

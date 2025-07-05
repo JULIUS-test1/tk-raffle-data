@@ -42,6 +42,7 @@
           :winnersCount="10"
           :roundWinners="firstRound"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
         <RaffleCard
           title="10 Winners of 1,000 Gift Certificates"
@@ -49,6 +50,7 @@
           :winnersCount="10"
           :roundWinners="secondRound"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
       </div>
       <div
@@ -60,6 +62,7 @@
           :winnersCount="10"
           :roundWinners="thirdRound"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
         <RaffleCard
           title="8 Winners of 2,000 Gift Certificates"
@@ -67,6 +70,7 @@
           :winnersCount="8"
           :roundWinners="fourthRound"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
       </div>
 
@@ -79,6 +83,7 @@
           :winnersCount="1"
           :roundWinners="finalRound1"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
         <RaffleCard
           class="mx-auto !min-h-[200px] w-full md:w-1/2"
@@ -87,6 +92,7 @@
           :winnersCount="1"
           :roundWinners="finalRound2"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
         <RaffleCard
           class="mx-auto !min-h-[200px] w-full md:w-1/2"
@@ -95,6 +101,7 @@
           :winnersCount="1"
           :roundWinners="finalRound3"
           @drawWinners="(n, c) => drawWinners(n, c)"
+          @handleViewInfo="handleViewInfo"
         />
       </div>
     </template>
@@ -104,23 +111,41 @@
     </div>
 
     <!-- Popup Modal -->
-    <!-- <div
+    <div
       v-if="showPopup"
-      class="fixed inset-0 bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150 flex items-center justify-center z-50"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150"
     >
       <div
-        class="bg-white py-5 px-12 rounded-lg relative shadow-xl h-[90%] w-[600px] flex items-center justify-center"
+        class="relative min-h-fit w-[600px] rounded-lg bg-white px-6 py-5 shadow-xl"
       >
         <button
           @click="showPopup = false"
-          class="absolute top-3 right-4 text-black text-xl font-bold cursor-pointer"
+          class="absolute top-3 right-4 cursor-pointer text-xl font-bold text-black"
         >
           ✕
         </button>
-
-        <div>1</div>
+        <h2 class="mb-4 text-center">Winner Informations</h2>
+        <template v-for="(entry, index) in userInfo" :key="index">
+          <div
+            class="border1 flex min-h-10 w-full items-center"
+            v-for="(item, idx) in keysArray"
+            :key="idx"
+          >
+            <div class="flex-1">{{ item }}:</div>
+            <div class="flex-1">
+              <span
+                v-if="item == 'Upload Receipt'"
+                class="hover:text-warm-red cursor-pointer underline"
+                @click="handleViewImage(entry['Upload Receipt'])"
+              >
+                view
+              </span>
+              <template v-else>{{ formatItemDisplay(item, entry) }}</template>
+            </div>
+          </div>
+        </template>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -129,13 +154,33 @@ import { ref, computed, onMounted } from 'vue';
 import { db } from '../../../firebase'; // path to your firebase.js
 import { collection, addDoc, getDocs, Timestamp } from 'firebase/firestore';
 import RaffleCard from './RaffleCard.vue';
+import {
+  convertUTCtoPH,
+  formatDate,
+  formatMobileNumber,
+  formatToPeso,
+} from '../../../utils/utils';
 
 const props = defineProps(['isLoading', 'tableData']);
 const emit = defineEmits(['update:isLoading']);
 
+const keysArray = [
+  'Full Name',
+  'Mobile Number',
+  'Email Address',
+  'Birthdate',
+  'Residential Address',
+  'Branch',
+  'Date of Purchase',
+  'Purchase Amount',
+  'Receipt / Invoice Number',
+  'Upload Receipt',
+  'Submitted at',
+];
+
 const showEntries = ref(false);
 const showPopup = ref(false);
-const userViewInfo = ref({});
+const userInfo = ref({});
 const allEntries = ref([]);
 const drawnRounds = ref([]);
 
@@ -177,12 +222,14 @@ const totalWinnersCount = computed(() => {
 
 onMounted(() => {
   loadAllWinners();
-  // allEntries.value = getRaffleEntries(props.tableData);
+  allEntries.value = getRaffleEntries(props.tableData);
 
   setTimeout(() => {
-    allEntries.value = getRaffleEntries(props.tableData);
+    // allEntries.value = getRaffleEntries(props.tableData);
     emit('update:isLoading', false);
   }, 500);
+
+  // fetchTallyInsight();
 });
 
 const formatBg = (roundName) => {
@@ -310,8 +357,52 @@ const fetchWinners = async (roundName) => {
   }
 };
 
+// const insights = ref(null);
+// const API_KEY = import.meta.env.VITE_TALLY_API_KEY;
+
+// const fetchTallyInsight = async () => {
+//   const formId = 'wvVaGg';
+//   const res = await fetch(`https://api.tally.so/forms/wvVaGg/insights`, {
+//     headers: { Authorization: `Bearer ${API_KEY}` },
+//     'Content-Type': 'application/json',
+//   });
+//   // const res = await fetch(`https://api.tally.so/forms/${formId}/submissions`, {
+//   //   headers: { Authorization: `Bearer ${API_KEY}` },
+//   // });
+//   insights.value = await res.json();
+//   console.log(insights.value, 333);
+// };
+
+const formatItemDisplay = (itemName, entry) => {
+  if (itemName == 'Mobile Number') return formatMobileNumber(entry[itemName]);
+  if (itemName == 'Purchase Amount') return formatToPeso(entry[itemName]);
+  if (itemName == 'Submitted at') return convertUTCtoPH(entry[itemName]);
+  if (itemName == 'Upload Receipt') return '';
+  if (['Birthdate', 'Date of Purchase'].includes(itemName)) {
+    return formatDate(entry[itemName]);
+  }
+
+  return entry[itemName];
+};
+
+const filterUserData = (data, keysArray) => {
+  return data.map((entry) => {
+    const filtered = {};
+    keysArray.forEach((key) => {
+      if (entry[key] !== undefined) {
+        filtered[key] = entry[key];
+      }
+    });
+    return filtered;
+  });
+};
+
 const handleViewInfo = (name) => {
-  userViewInfo.value = props.tableData.find((_) => _['Full Name'] == name);
+  console.log(name);
+
+  const data = props.tableData.filter((_) => _['Full Name'] == name);
+  userInfo.value = filterUserData(data, keysArray);
+
   showPopup.value = true;
 };
 </script>

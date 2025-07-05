@@ -194,10 +194,12 @@ const formatItemDisplay = (itemName, entry) => {
     return calculateEntries(entry['Purchase Amount']);
   }
   if (itemName == 'Mobile Number') return formatMobileNumber(entry[itemName]);
-  if (itemName == 'Birthdate') return formatDate(entry[itemName]);
   if (itemName == 'Purchase Amount') return formatToPeso(entry[itemName]);
   if (itemName == 'Submitted at') return convertUTCtoPH(entry[itemName]);
   if (itemName == 'Upload Receipt') return '';
+  if (['Birthdate', 'Date of Purchase'].includes(itemName)) {
+    return formatDate(entry[itemName]);
+  }
 
   return entry[itemName];
 };
