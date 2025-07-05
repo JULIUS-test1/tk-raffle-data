@@ -12,7 +12,7 @@
         class="mb-1 flex justify-between gap-x-3 px-4"
       >
         <div class="flex">
-          <div v-if="idx != 0" class="mr-1 font-mono tabular-nums">
+          <div v-if="winnersCount != 1" class="mr-1 font-mono tabular-nums">
             {{ idx + 1 }}.
           </div>
           <div class="mt-[2px]">{{ item.name }}</div>

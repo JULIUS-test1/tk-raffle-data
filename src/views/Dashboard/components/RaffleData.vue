@@ -25,7 +25,12 @@
           class="bg-c-white h-fit rounded px-3 py-2"
           :class="formatBg(item.roundName)"
         >
-          {{ item.name }}
+          <template v-if="item.isWin">
+            {{ item.id }}. {{ item.name }}
+          </template>
+          <template v-else>
+            {{ item.name }}
+          </template>
         </div>
       </div>
 
@@ -168,6 +173,8 @@ const pickWinners = (entries, previousWinners = [], roundName, count) => {
   const winnerNames = new Set(); // Track names already chosen in this round
   const total = Math.min(count, eligible.length);
 
+  let id = 1;
+
   while (newWinners.length < total && eligible.length > 0) {
     const index = Math.floor(Math.random() * eligible.length);
     const [candidate] = eligible.splice(index, 1);
@@ -175,12 +182,15 @@ const pickWinners = (entries, previousWinners = [], roundName, count) => {
     // Skip if name already won this round
     if (winnerNames.has(candidate.name)) continue;
 
+    candidate.id = id;
     candidate.isWin = true;
     candidate.roundName = roundName;
     candidate.date = new Date();
 
     newWinners.push(candidate);
     winnerNames.add(candidate.name);
+
+    id++;
   }
 
   return newWinners;

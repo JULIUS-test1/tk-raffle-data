@@ -46,6 +46,17 @@
 </template>
 
 <script setup>
+import { signOut } from 'firebase/auth';
+import { auth } from '../../../firebase'; // adjust the path to your firebase.js
+
 defineProps(['modelValue']);
 defineEmits(['update:modelValue']);
+
+const handleLogout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+};
 </script>
