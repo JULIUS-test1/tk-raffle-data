@@ -37,7 +37,8 @@
         class="bg-warm-red-h hover:bg-warm-red cursor-pointer rounded-lg px-6 py-2 font-bold text-white shadow"
         @click="$emit('drawWinners', roundName, winnersCount)"
       >
-        Generate {{ winnersCount }} Winners
+        Generate {{ winnersCount }}
+        {{ winnersCount == 1 ? 'Winner' : 'Winners' }}
       </div>
     </div>
   </div>
@@ -52,6 +53,7 @@ const props = defineProps([
   'winnersCount',
   'roundWinners',
 ]);
+
 defineEmits(['drawWinners']);
 
 const formatBg = () => {
@@ -73,7 +75,16 @@ const formatBg = () => {
   }
 };
 
-const formatDate = (date) => {
+const formatDate = (dateStr) => {
+  const timestamp = {
+    seconds: dateStr.seconds,
+    nanoseconds: dateStr.nanoseconds,
+  };
+
+  const date = new Date(
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1_000_000
+  );
+
   return dayjs(date).format('MM-DD-YYYY hh:mm:ss A');
 };
 </script>

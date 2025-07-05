@@ -5,14 +5,14 @@
         Total Raffle Entries: {{ totalEntries }}
       </h2>
       <h2 class="my-4 text-2xl md:text-4xl">
-        Total Remaining Entries: {{ remainingEntries }}
+        Total Remaining Entries: {{ totalRemainingEntries }}
       </h2>
       <h2 class="my-4 text-2xl md:text-4xl">
         Total Winners: {{ totalWinnersCount }}
       </h2>
 
       <button
-        class="bg-warm-red cursor-pointer rounded-md px-4 py-2 text-white"
+        class="bg-warm-red min-w-[150px] cursor-pointer rounded-md px-4 py-2 text-center text-white"
         @click="showEntries = !showEntries"
       >
         {{ showEntries ? 'Hide' : 'Show' }} All Entries
@@ -35,7 +35,6 @@
       </div>
 
       <h2 class="mt-20 mb-5 text-xl">Consolation Prizes (38 winners)</h2>
-
       <div class="flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10">
         <RaffleCard
           title="10 Winners of Gift Box #9"
@@ -45,7 +44,7 @@
           @drawWinners="(n, c) => drawWinners(n, c)"
         />
         <RaffleCard
-          title="10 Winners of ₱1,000 Gift Certificates"
+          title="10 Winners of 1,000 Gift Certificates"
           roundName="secondRound"
           :winnersCount="10"
           :roundWinners="secondRound"
@@ -56,14 +55,14 @@
         class="mt-10 flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10"
       >
         <RaffleCard
-          title="10 Winners of ₱1,500 Gift Certificates"
+          title="10 Winners of 1,500 Gift Certificates"
           roundName="thirdRound"
           :winnersCount="10"
           :roundWinners="thirdRound"
           @drawWinners="(n, c) => drawWinners(n, c)"
         />
         <RaffleCard
-          title="10 Winners of ₱2,000 Gift Certificates"
+          title="8 Winners of 2,000 Gift Certificates"
           roundName="fourthRound"
           :winnersCount="8"
           :roundWinners="fourthRound"
@@ -72,7 +71,6 @@
       </div>
 
       <h2 class="mt-20 mb-5 text-xl">Grand Prizes (3 winners)</h2>
-
       <div class="flex flex-col gap-y-10 md:flex-row md:gap-x-10">
         <RaffleCard
           class="mx-auto !min-h-[200px] w-full md:w-1/2"
@@ -128,6 +126,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { db } from '../../../firebase'; // path to your firebase.js
+import { collection, addDoc, getDocs, Timestamp } from 'firebase/firestore';
 import RaffleCard from './RaffleCard.vue';
 
 const props = defineProps(['isLoading', 'tableData']);
@@ -139,7 +139,44 @@ const userViewInfo = ref({});
 const allEntries = ref([]);
 const drawnRounds = ref([]);
 
+const roundList = [
+  'firstRound',
+  'secondRound',
+  'thirdRound',
+  'fourthRound',
+  'finalRound1',
+  'finalRound2',
+  'finalRound3',
+];
+
+const getWinners = (roundName) => {
+  return computed(() => {
+    return drawnRounds.value.find((round) => round.round === roundName)
+      ?.winners;
+  });
+};
+
+const firstRound = getWinners('firstRound');
+const secondRound = getWinners('secondRound');
+const thirdRound = getWinners('thirdRound');
+const fourthRound = getWinners('fourthRound');
+const finalRound1 = getWinners('finalRound1');
+const finalRound2 = getWinners('finalRound2');
+const finalRound3 = getWinners('finalRound3');
+
+const totalEntries = computed(() => allEntries.value.length);
+const totalRemainingEntries = computed(() => {
+  const wonIds = drawnRounds.value.flatMap((r) => r.winners.map((w) => w.id));
+  return allEntries.value.filter((e) => !wonIds.includes(e.id))?.length;
+});
+const totalWinnersCount = computed(() => {
+  return drawnRounds.value.reduce((total, round) => {
+    return total + (round.winners?.length || 0);
+  }, 0);
+});
+
 onMounted(() => {
+  loadAllWinners();
   // allEntries.value = getRaffleEntries(props.tableData);
 
   setTimeout(() => {
@@ -147,6 +184,27 @@ onMounted(() => {
     emit('update:isLoading', false);
   }, 500);
 });
+
+const formatBg = (roundName) => {
+  switch (roundName) {
+    case 'firstRound':
+      return '!bg-first';
+    case 'secondRound':
+      return '!bg-second';
+    case 'thirdRound':
+      return '!bg-third';
+    case 'fourthRound':
+      return '!bg-fourth';
+  }
+};
+
+const loadAllWinners = async () => {
+  try {
+    await Promise.all(roundList.map((item) => fetchWinners(item)));
+  } catch (error) {
+    console.error('❌ Error fetching:', error);
+  }
+};
 
 const getRaffleEntries = (data) => {
   const entries = [];
@@ -215,56 +273,40 @@ const drawWinners = (roundName, totalCount) => {
     round: roundName,
     winners: newWinners,
   });
+
+  saveWinners(roundName, newWinners);
 };
 
-const totalEntries = computed(() => allEntries.value.length);
-const remainingEntries = computed(() => {
-  const wonIds = drawnRounds.value.flatMap((r) => r.winners.map((w) => w.id));
-  return allEntries.value.filter((e) => !wonIds.includes(e.id))?.length;
-});
-const totalWinnersCount = computed(() => {
-  return allEntries.value.filter((entry) => entry.isWin).length;
-});
+const saveWinners = async (roundName, winnersList) => {
+  try {
+    await addDoc(collection(db, roundName), {
+      winnersList: winnersList, // 👈 this is the array
+      raffleDate: Timestamp.now(), // optional timestamp
+    });
+    console.log('✅ Winners list saved!');
+  } catch (err) {
+    console.error('❌ Error saving winners:', err);
+  }
+};
 
-const firstRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'firstRound')
-    ?.winners;
-});
-const secondRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'secondRound')
-    ?.winners;
-});
-const thirdRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'thirdRound')
-    ?.winners;
-});
-const fourthRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'fourthRound')
-    ?.winners;
-});
-const finalRound1 = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'finalRound1')
-    ?.winners;
-});
-const finalRound2 = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'finalRound2')
-    ?.winners;
-});
-const finalRound3 = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'finalRound3')
-    ?.winners;
-});
+const fetchWinners = async (roundName) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, roundName));
 
-const formatBg = (roundName) => {
-  switch (roundName) {
-    case 'firstRound':
-      return '!bg-first';
-    case 'secondRound':
-      return '!bg-second';
-    case 'thirdRound':
-      return '!bg-third';
-    case 'fourthRound':
-      return '!bg-fourth';
+    if (querySnapshot.empty) {
+      console.warn(`⚠️ No winners found in '${roundName}'`);
+      return [];
+    }
+
+    const data = querySnapshot.docs.flatMap((doc) => doc.data().winnersList);
+
+    drawnRounds.value.push({
+      round: data[0].roundName,
+      winners: data,
+    });
+  } catch (error) {
+    console.error(`❌ Error fetching winners from '${roundName}':`, error);
+    return [];
   }
 };
 

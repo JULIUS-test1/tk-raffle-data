@@ -38,11 +38,10 @@ import TableData from './components/TableData.vue';
 import RaffleData from './components/RaffleData.vue';
 import Papa from 'papaparse';
 import { onMounted, ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import { convertUTCtoPH, formatDate } from '../../utils/utils';
 
 const isLoading = ref(false);
-const activeTab = ref(0);
+const activeTab = ref(1);
 const tableData = ref([]);
 const filteredData = ref([]);
 const searchQuery = ref('');
@@ -76,9 +75,9 @@ watch(selectedBranch, (nV, oV) => {
   searchQuery.value = '';
   selectedDate.value = null;
 
-  return (filteredData.value = tableData.value.filter(
-    (entry) => entry['Branch']?.trim() === selectedBranch.value.trim()
-  ));
+  filteredData.value = tableData.value.filter((entry) => {
+    return entry['Branch']?.trim() === selectedBranch.value.trim();
+  });
 });
 
 watch(selectedDate, (nV, oV) => {
@@ -89,10 +88,10 @@ watch(selectedDate, (nV, oV) => {
   searchQuery.value = '';
   selectedBranch.value = '';
 
-  return (filteredData.value = tableData.value.filter((item) => {
+  filteredData.value = tableData.value.filter((item) => {
     const submittedDate = convertUTCtoPH(item['Submitted at']).split(' ')[0];
     return submittedDate === formatDate(nV);
-  }));
+  });
 });
 
 const fetchData = async () => {
@@ -138,24 +137,6 @@ const handleSearch = () => {
 
     return values.includes(search);
   });
-};
-
-const router = useRouter();
-
-function handleLogout() {
-  router.push('/');
-}
-
-const winner = ref(null);
-
-const pickRandomWinner = () => {
-  if (!tableData.value.length) {
-    winner.value = null;
-    return;
-  }
-
-  const randomIndex = Math.floor(Math.random() * tableData.value.length);
-  winner.value = tableData.value[randomIndex];
 };
 
 const handleViewInfo = (info) => {
