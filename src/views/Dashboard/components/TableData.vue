@@ -2,13 +2,13 @@
   <template v-if="!isLoading">
     <div
       v-if="filteredData?.length"
-      class="mx-auto px-4 sm:px-10 w-fit overflow-y-auto"
+      class="mx-auto w-fit overflow-y-auto px-4 sm:px-10"
     >
       <div class="flex w-fit">
         <div
           v-for="(item, idx) in keysArray"
           :key="idx"
-          class="px-1 py-3 text-xs shrink-0 font-sb !uppercase leading-5 items-center flex !text-maroon border-b-2 border-maroon"
+          class="font-sb !text-maroon border-maroon flex shrink-0 items-center border-b-2 px-1 py-3 text-xs leading-5 !uppercase"
           :class="formatWidth(item)"
         >
           {{ item == 'Submitted at' ? 'Date Submitted' : item }}
@@ -17,14 +17,14 @@
 
       <div class="h-[600px]">
         <div
-          class="flex my-3 w-fit rounded-md bg-c-white"
+          class="bg-c-white my-3 flex w-fit rounded-md"
           v-for="(entry, index) in paginatedItems"
           :key="index"
         >
           <div
             v-for="(item, idx) in keysArray"
             :key="idx"
-            class="px-1 py-3 text-xs shrink-0 font-sb leading-5 flex text-maroon break-all"
+            class="font-sb text-maroon flex shrink-0 px-1 py-3 text-xs leading-5 break-all"
             :class="formatWidth(item)"
           >
             <span
@@ -49,7 +49,7 @@
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="w-20 h-20 mb-6 text-warm-red"
+        class="text-warm-red mb-6 h-20 w-20"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -61,8 +61,8 @@
           d="M21 21l-4.35-4.35m0 0A7 7 0 103.6 9.6a7 7 0 0013.05 7.05z"
         />
       </svg>
-      <p class="text-3xl text-warm-red mb-2">No results found</p>
-      <p class="text-lg text-maroon">
+      <p class="text-warm-red mb-2 text-3xl">No results found</p>
+      <p class="text-maroon text-lg">
         Try adjusting your filters or search term.
       </p>
     </div>
@@ -70,17 +70,17 @@
     <!-- Pagination UI -->
     <div
       v-if="filteredData?.length"
-      class="flex justify-center items-center gap-1 text-sm mt-5"
+      class="flex items-center justify-center gap-1 text-sm"
     >
       <!-- Previous Button -->
       <button
         @click="goToPage(currentPage - 1)"
         :disabled="currentPage === 1"
-        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50 cursor-pointer"
+        class="cursor-pointer rounded bg-gray-100 p-2 hover:bg-gray-200 disabled:opacity-50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4"
+          class="h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -100,9 +100,9 @@
         :key="page"
         @click="goToPage(page)"
         :class="[
-          'h-8 w-8 rounded flex items-center justify-center pt-[2px] transition cursor-pointer',
+          'flex h-8 w-8 cursor-pointer items-center justify-center rounded pt-[2px] transition',
           page === currentPage
-            ? 'bg-warm-red text-white font-bold'
+            ? 'bg-warm-red font-bold text-white'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
         ]"
       >
@@ -113,11 +113,11 @@
       <button
         @click="goToPage(currentPage + 1)"
         :disabled="currentPage === totalPages"
-        class="p-2 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50 cursor-pointer"
+        class="cursor-pointer rounded bg-gray-100 p-2 hover:bg-gray-200 disabled:opacity-50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4"
+          class="h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -133,21 +133,21 @@
     </div>
   </template>
 
-  <div v-else class="h-[600px] w-full flex items-center justify-center">
+  <div v-else class="flex h-[600px] w-full items-center justify-center">
     <div class="loader text-warm-red"></div>
   </div>
 
   <!-- Popup Modal -->
   <div
     v-if="showPopup"
-    class="fixed inset-0 bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150 flex items-center justify-center z-50"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150"
   >
     <div
-      class="bg-white py-5 px-12 rounded-lg relative shadow-xl h-[90%] w-[600px] flex items-center justify-center"
+      class="relative flex h-[90%] w-[600px] items-center justify-center rounded-lg bg-white px-12 py-5 shadow-xl"
     >
       <button
         @click="showPopup = false"
-        class="absolute top-3 right-4 text-black text-xl font-bold cursor-pointer"
+        class="absolute top-3 right-4 cursor-pointer text-xl font-bold text-black"
       >
         ✕
       </button>

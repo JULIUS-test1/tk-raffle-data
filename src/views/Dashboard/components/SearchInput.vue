@@ -1,13 +1,13 @@
 <template>
-  <div class="flex flex-col grow">
-    <p class="text-c-beige mb-1 text-md">What are you looking for?</p>
+  <div class="flex grow flex-col">
+    <p class="text-c-beige text-md mb-1">What are you looking for?</p>
 
     <div class="relative w-full">
       <div
-        class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+        class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3"
       >
         <svg
-          class="w-4 h-4 text-c-beige"
+          class="text-c-beige h-4 w-4"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -27,7 +27,7 @@
         type="search"
         :value="modelValue"
         id="default-search"
-        class="block w-full px-3 h-[45px] ps-10 pe-26 text-sm text-c-beige placeholder-c-beige border-transparent rounded bg-red-1 focus:ring-c-beige focus:outline-c-beige focus:outline-1"
+        class="text-c-beige placeholder-c-beige bg-red-1 focus:ring-c-beige focus:outline-c-beige block h-[45px] w-full rounded border-transparent px-3 ps-10 pe-26 text-sm focus:outline-1"
         placeholder="Search for name, address etc."
         required
         @input="$emit('update:modelValue', $event.target.value)"
@@ -38,14 +38,14 @@
         v-if="modelValue"
         @click="$emit('update:modelValue', '')"
         type="button"
-        class="absolute end-25 top-1/2 -translate-y-1/2 text-c-beige text-md cursor-pointer"
+        class="text-c-beige text-md absolute end-25 top-1/2 -translate-y-1/2 cursor-pointer"
       >
         ✕
       </button>
 
       <button
         type="submit"
-        class="text-warm-red absolute end-2 top-1/2 -translate-y-1/2 bg-c-beige hover:bg-white focus:ring-1 focus:outline-none rounded-xs text-sm px-4 py-1 cursor-pointer"
+        class="text-warm-red bg-c-beige absolute end-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-xs px-4 py-1 text-sm hover:bg-white focus:ring-1 focus:outline-none"
         @click="$emit('handleSearch')"
       >
         Search

@@ -1,17 +1,17 @@
 <template>
   <header
-    class="min-h-30 bg-warm-red px-4 sm:px-10 pt-4 flex flex-col justify-between pb-[2px] shadow-2xs w-full"
+    class="bg-warm-red flex min-h-30 w-full flex-col justify-between px-4 pt-4 pb-[2px] shadow-2xs sm:px-10"
   >
     <div class="flex justify-between">
       <img src="/src/assets/tpk-logo-white.png" alt="tpk-logo" class="w-40" />
 
       <button
         @click="handleLogout"
-        class="flex items-center space-x-2 text-c-beige cursor-pointer"
+        class="text-c-beige flex cursor-pointer items-center space-x-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-7 h-7"
+          class="h-7 w-7"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -28,14 +28,14 @@
 
     <div class="flex items-center gap-x-7 px-3">
       <div
-        class="text-c-beige border-b-[3px] px-1 w-fit cursor-pointer pb-1"
+        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1"
         :class="modelValue == 0 ? 'border-c-beige' : 'border-transparent'"
         @click="$emit('update:modelValue', 0)"
       >
         Raffle Entries
       </div>
       <div
-        class="text-c-beige border-b-[3px] px-1 w-fit cursor-pointer pb-1"
+        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1"
         :class="modelValue == 1 ? 'border-c-beige' : 'border-transparent'"
         @click="$emit('update:modelValue', 1)"
       >

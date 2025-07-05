@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col flex-1 mt-5">
-    <p class="text-c-beige mb-1 text-md">Filter by date submitted</p>
+  <div class="mt-5 flex flex-1 flex-col">
+    <p class="text-c-beige text-md mb-1">Filter by date submitted</p>
 
     <div class="relative w-full">
       <VueDatePicker

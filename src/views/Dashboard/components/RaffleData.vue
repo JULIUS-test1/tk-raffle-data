@@ -1,228 +1,104 @@
 <template>
-  <div class="mt-5 mx-4 sm:mx-10">
-    <!-- <template v-if="!isLoading"> -->
-    <h2 class="text-center text-4xl my-4">
-      Total Raffle Entries: {{ totalEntries }}
-    </h2>
-    <h2 class="text-center text-4xl my-4">
-      Total Remaining Entries: {{ remainingEntries }}
-    </h2>
-    <h2 class="text-center text-4xl my-4">
-      Total Winners: {{ totalWinnersCount }}
-    </h2>
+  <div class="mx-4 mt-5 sm:mx-10">
+    <template v-if="!isLoading">
+      <h2 class="my-4 text-2xl md:text-4xl">
+        Total Raffle Entries: {{ totalEntries }}
+      </h2>
+      <h2 class="my-4 text-2xl md:text-4xl">
+        Total Remaining Entries: {{ remainingEntries }}
+      </h2>
+      <h2 class="my-4 text-2xl md:text-4xl">
+        Total Winners: {{ totalWinnersCount }}
+      </h2>
 
-    <button
-      class="mx-auto block px-4 py-2 bg-warm-red text-white rounded-md cursor-pointer"
-      @click="showEntries = !showEntries"
-    >
-      {{ showEntries ? 'Hide' : 'Show' }} All Entries
-    </button>
+      <button
+        class="bg-warm-red cursor-pointer rounded-md px-4 py-2 text-white"
+        @click="showEntries = !showEntries"
+      >
+        {{ showEntries ? 'Hide' : 'Show' }} All Entries
+      </button>
 
-    <div v-if="showEntries" class="flex gap-3 flex-wrap mt-10">
-      <div
-        v-for="(item, idx) in allEntries"
-        :key="idx"
-        class="bg-c-white py-2 px-3 h-fit rounded"
-        :class="formatBgColor(item.roundName)"
-      >
-        {{ item.name }}
-      </div>
-    </div>
-
-    <h2 class="text-xl mb-4 mt-20">Consolation Prizes (38 winners)</h2>
-    <div class="flex gap-y-8 md:flex-row md:gap-x-8 flex-col">
-      <div
-        class="flex-1 py-3 bg-c-white min-h-[360px] rounded-lg shadow-2xl"
-        :class="{ '!bg-first': firstRound }"
-      >
-        <h2 class="text-center text-maroon mb-4">10 Winners of Gift Box #9</h2>
-        <template v-if="firstRound">
-          <div
-            v-for="(item, idx) in firstRound"
-            :key="idx"
-            class="flex justify-between px-4 gap-x-3 mb-1"
-          >
-            <div class="flex">
-              <div class="font-mono tabular-nums mr-1">{{ idx + 1 }}.</div>
-              <div class="mt-[2px]">{{ item.name }}</div>
-            </div>
-            <button
-              class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(item.name)"
-            >
-              view
-            </button>
-          </div>
-        </template>
+      <div v-if="showEntries" class="mt-10 flex flex-wrap gap-3">
         <div
-          v-else
-          class="w-full h-[300px] flex items-center justify-center outline1"
-        >
-          <div
-            class="bg-warm-red-h hover:bg-warm-red text-white font-bold py-2 px-6 rounded-lg shadow cursor-pointer"
-            @click="drawWinners('first', 10)"
-          >
-            Generate 10 Winners
-          </div>
-        </div>
-      </div>
-      <div
-        class="flex-1 py-3 bg-c-white min-h-[360px] rounded-lg shadow-2xl"
-        :class="{ '!bg-second': secondRound }"
-      >
-        <h2 class="text-center text-maroon mb-4">
-          10 Winners of <span class="font-mono pb-0.5">₱</span>1,000 Gift
-          Certificates
-        </h2>
-        <template v-if="secondRound">
-          <div
-            v-for="(item, idx) in secondRound"
-            :key="idx"
-            class="flex justify-between px-4 gap-x-3 mb-1"
-          >
-            <div class="flex">
-              <div class="font-mono tabular-nums mr-1">{{ idx + 1 }}.</div>
-              <div class="mt-[2px]">{{ item.name }}</div>
-            </div>
-            <button
-              class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(item.name)"
-            >
-              view
-            </button>
-          </div>
-        </template>
-        <div
-          v-else
-          class="w-full h-[300px] flex items-center justify-center outline1"
-        >
-          <div
-            class="bg-warm-red-h hover:bg-warm-red text-white font-bold py-2 px-6 rounded-lg shadow cursor-pointer"
-            @click="drawWinners('second', 10)"
-          >
-            Generate 10 Winners
-          </div>
-        </div>
-      </div>
-      <div
-        class="flex-1 py-3 bg-c-white min-h-[360px] rounded-lg shadow-2xl"
-        :class="{ '!bg-third': thirdRound }"
-      >
-        <h2 class="text-center text-maroon mb-4">
-          10 Winners of <span class="font-mono pb-0.5">₱</span>1,500 Gift
-          Certificates
-        </h2>
-        <template v-if="thirdRound">
-          <div
-            v-for="(item, idx) in thirdRound"
-            :key="idx"
-            class="flex justify-between px-4 gap-x-3 mb-1"
-          >
-            <div class="flex">
-              <div class="font-mono tabular-nums mr-1">{{ idx + 1 }}.</div>
-              <div class="mt-[2px]">{{ item.name }}</div>
-            </div>
-            <button
-              class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(item.name)"
-            >
-              view
-            </button>
-          </div>
-        </template>
-        <div
-          v-else
-          class="w-full h-[300px] flex items-center justify-center outline1"
-        >
-          <div
-            class="bg-warm-red-h hover:bg-warm-red text-white font-bold py-2 px-6 rounded-lg shadow cursor-pointer"
-            @click="drawWinners('third', 10)"
-          >
-            Generate 10 Winners
-          </div>
-        </div>
-      </div>
-      <div
-        class="flex-1 py-3 bg-c-white min-h-[360px] rounded-lg shadow-2xl"
-        :class="{ '!bg-fourth': fourthRound }"
-      >
-        <h2 class="text-center text-maroon mb-4">
-          8 Winners of <span class="font-mono pb-0.5">₱</span>2,000 Gift
-          Certificates
-        </h2>
-        <template v-if="fourthRound">
-          <div
-            v-for="(item, idx) in fourthRound"
-            :key="idx"
-            class="flex justify-between px-4 gap-x-3 mb-1"
-          >
-            <div class="flex">
-              <div class="font-mono tabular-nums mr-1">{{ idx + 1 }}.</div>
-              <div class="mt-[2px]">{{ item.name }}</div>
-            </div>
-            <button
-              class="cursor-pointer hover:text-warm-red hover:underline"
-              @click="handleViewInfo(item.name)"
-            >
-              view
-            </button>
-          </div>
-        </template>
-        <div
-          v-else
-          class="w-full h-[300px] flex items-center justify-center outline1"
-        >
-          <div
-            class="bg-warm-red-h hover:bg-warm-red text-white font-bold py-2 px-6 rounded-lg shadow cursor-pointer"
-            @click="drawWinners('fourth', 8)"
-          >
-            Generate 8 Winners
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- <h2 class="text-xl mb-4 mt-20">Grand Prize</h2> -->
-    <div
-      class="py-3 bg-c-white md:w-[350px] w-full mx-auto mt-20 min-h-[200px] rounded-lg shadow-2xl"
-      :class="{ '!bg-winner': finalRound }"
-    >
-      <h2 class="text-center text-maroon mb-4">Grand Prize</h2>
-      <template v-if="finalRound">
-        <div
-          v-for="(item, idx) in finalRound"
+          v-for="(item, idx) in allEntries"
           :key="idx"
-          class="flex justify-between px-4 gap-x-3 mb-1"
+          class="bg-c-white h-fit rounded px-3 py-2"
+          :class="formatBg(item.roundName)"
         >
-          <div class="flex">
-            <div class="font-mono tabular-nums mr-1">{{ idx + 1 }}.</div>
-            <div class="mt-[2px]">{{ item.name }}</div>
-          </div>
-          <button
-            class="cursor-pointer hover:text-warm-red hover:underline"
-            @click="handleViewInfo(item.name)"
-          >
-            view
-          </button>
-        </div>
-      </template>
-      <div
-        v-else
-        class="w-full h-[120px] flex items-center justify-center outline1"
-      >
-        <div
-          class="bg-warm-red-h hover:bg-warm-red text-white font-bold py-2 px-6 rounded-lg shadow cursor-pointer"
-          @click="drawWinners('final', 1)"
-        >
-          Generate Winners
+          {{ item.name }}
         </div>
       </div>
-    </div>
-    <!-- </template> -->
 
-    <!-- <div v-else class="h-[600px] w-full flex items-center justify-center">
+      <h2 class="mt-20 mb-5 text-xl">Consolation Prizes (38 winners)</h2>
+
+      <div class="flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10">
+        <RaffleCard
+          title="10 Winners of Gift Box #9"
+          roundName="firstRound"
+          :winnersCount="10"
+          :roundWinners="firstRound"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+        <RaffleCard
+          title="10 Winners of ₱1,000 Gift Certificates"
+          roundName="secondRound"
+          :winnersCount="10"
+          :roundWinners="secondRound"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+      </div>
+      <div
+        class="mt-10 flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10"
+      >
+        <RaffleCard
+          title="10 Winners of ₱1,500 Gift Certificates"
+          roundName="thirdRound"
+          :winnersCount="10"
+          :roundWinners="thirdRound"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+        <RaffleCard
+          title="10 Winners of ₱2,000 Gift Certificates"
+          roundName="fourthRound"
+          :winnersCount="8"
+          :roundWinners="fourthRound"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+      </div>
+
+      <h2 class="mt-20 mb-5 text-xl">Grand Prizes (3 winners)</h2>
+
+      <div class="flex flex-col gap-y-10 md:flex-row md:gap-x-10">
+        <RaffleCard
+          class="mx-auto !min-h-[200px] w-full md:w-1/2"
+          title="Trip to Boracay"
+          roundName="finalRound1"
+          :winnersCount="1"
+          :roundWinners="finalRound1"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+        <RaffleCard
+          class="mx-auto !min-h-[200px] w-full md:w-1/2"
+          title="Trip to Discovery Samal"
+          roundName="finalRound2"
+          :winnersCount="1"
+          :roundWinners="finalRound2"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+        <RaffleCard
+          class="mx-auto !min-h-[200px] w-full md:w-1/2"
+          title="Trip to Hong Kong Disneyland"
+          roundName="finalRound3"
+          :winnersCount="1"
+          :roundWinners="finalRound3"
+          @drawWinners="(n, c) => drawWinners(n, c)"
+        />
+      </div>
+    </template>
+
+    <div v-else class="flex h-[600px] w-full items-center justify-center">
       <div class="loader text-warm-red"></div>
-    </div> -->
+    </div>
 
     <!-- Popup Modal -->
     <!-- <div
@@ -247,6 +123,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import RaffleCard from './RaffleCard.vue';
 
 const props = defineProps(['isLoading', 'tableData']);
 const emit = defineEmits(['update:isLoading']);
@@ -255,7 +132,16 @@ const showEntries = ref(false);
 const showPopup = ref(false);
 const userViewInfo = ref({});
 const allEntries = ref([]);
-const drawnRounds = ref([]); // ⬅️ This stores all draw batches
+const drawnRounds = ref([]);
+
+onMounted(() => {
+  // allEntries.value = getRaffleEntries(props.tableData);
+
+  setTimeout(() => {
+    allEntries.value = getRaffleEntries(props.tableData);
+    emit('update:isLoading', false);
+  }, 500);
+});
 
 const getRaffleEntries = (data) => {
   const entries = [];
@@ -291,19 +177,14 @@ const pickWinners = (entries, previousWinners = [], roundName, count) => {
 
     candidate.isWin = true;
     candidate.roundName = roundName;
+    candidate.date = new Date();
+
     newWinners.push(candidate);
     winnerNames.add(candidate.name);
   }
 
   return newWinners;
 };
-
-onMounted(() => {
-  console.log('test');
-
-  allEntries.value = getRaffleEntries(props.tableData);
-  emit('update:isLoading', false);
-});
 
 // 🔄 Draw 10 winners into a named round
 const drawWinners = (roundName, totalCount) => {
@@ -320,12 +201,9 @@ const drawWinners = (roundName, totalCount) => {
     return;
   }
 
-  console.log(newWinners);
-
   drawnRounds.value.push({
     round: roundName,
     winners: newWinners,
-    date: new Date(),
   });
 };
 
@@ -339,35 +217,44 @@ const totalWinnersCount = computed(() => {
 });
 
 const firstRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'first')?.winners;
+  return drawnRounds.value.find((round) => round.round === 'firstRound')
+    ?.winners;
 });
 const secondRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'second')?.winners;
+  return drawnRounds.value.find((round) => round.round === 'secondRound')
+    ?.winners;
 });
 const thirdRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'third')?.winners;
+  return drawnRounds.value.find((round) => round.round === 'thirdRound')
+    ?.winners;
 });
 const fourthRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'fourth')?.winners;
+  return drawnRounds.value.find((round) => round.round === 'fourthRound')
+    ?.winners;
 });
-const finalRound = computed(() => {
-  return drawnRounds.value.find((round) => round.round === 'final')?.winners;
+const finalRound1 = computed(() => {
+  return drawnRounds.value.find((round) => round.round === 'finalRound1')
+    ?.winners;
+});
+const finalRound2 = computed(() => {
+  return drawnRounds.value.find((round) => round.round === 'finalRound2')
+    ?.winners;
+});
+const finalRound3 = computed(() => {
+  return drawnRounds.value.find((round) => round.round === 'finalRound3')
+    ?.winners;
 });
 
-const formatBgColor = (roundName) => {
-  console.log(roundName);
-
+const formatBg = (roundName) => {
   switch (roundName) {
-    case 'first':
+    case 'firstRound':
       return '!bg-first';
-    case 'second':
+    case 'secondRound':
       return '!bg-second';
-    case 'third':
+    case 'thirdRound':
       return '!bg-third';
-    case 'fourth':
+    case 'fourthRound':
       return '!bg-fourth';
-    case 'final':
-      return '!bg-winner';
   }
 };
 
