@@ -26,3 +26,32 @@ export const formatToPeso = (amount) => {
     minimumFractionDigits: 2,
   }).format(amount);
 };
+
+export const keysArray = [
+  'Full Name',
+  'Mobile Number',
+  'Email Address',
+  'Birthdate',
+  'Residential Address',
+  'Branch',
+  'Date of Purchase',
+  'Purchase Amount',
+  'Receipt / Invoice Number',
+  'Upload Receipt',
+  'Submitted at',
+];
+
+export const formatItemDisplay = (itemName, entry) => {
+  if (itemName == 'No. Of Entries') {
+    return calculateEntries(entry['Purchase Amount']);
+  }
+  if (itemName == 'Mobile Number') return formatMobileNumber(entry[itemName]);
+  if (itemName == 'Purchase Amount') return formatToPeso(entry[itemName]);
+  if (itemName == 'Submitted at') return convertUTCtoPH(entry[itemName]);
+  if (itemName == 'Upload Receipt') return '';
+  if (['Birthdate', 'Date of Purchase'].includes(itemName)) {
+    return formatDate(entry[itemName]);
+  }
+
+  return entry[itemName];
+};

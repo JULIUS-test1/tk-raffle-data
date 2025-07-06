@@ -1,12 +1,9 @@
 <template>
   <template v-if="!isLoading">
-    <div
-      v-if="filteredData?.length"
-      class="mx-auto w-fit overflow-y-auto px-4 sm:px-10"
-    >
-      <div class="flex w-fit">
+    <div v-if="filteredData?.length" class="mx-auto overflow-auto px-2">
+      <div class="mx-auto flex w-fit">
         <div
-          v-for="(item, idx) in keysArray"
+          v-for="(item, idx) in keysArrayTable"
           :key="idx"
           class="font-sb !text-maroon border-maroon flex shrink-0 items-center border-b-2 px-1 py-3 text-xs leading-5 !uppercase"
           :class="formatWidth(item)"
@@ -14,22 +11,21 @@
           {{ item == 'Submitted at' ? 'Date Submitted' : item }}
         </div>
       </div>
-
-      <div class="h-[600px]">
+      <div class="mx-auto h-[570px] w-fit">
         <div
           class="bg-c-white my-3 flex w-fit rounded-md"
           v-for="(entry, index) in paginatedItems"
           :key="index"
         >
           <div
-            v-for="(item, idx) in keysArray"
+            v-for="(item, idx) in keysArrayTable"
             :key="idx"
             class="font-sb text-maroon flex shrink-0 px-1 py-3 text-xs leading-5 break-all"
             :class="formatWidth(item)"
           >
             <span
               v-if="item == 'Upload Receipt'"
-              class="cursor-pointer underline"
+              class="cursor-pointer hover:underline"
               @click="handleViewImage(entry['Upload Receipt'])"
             >
               view
@@ -45,7 +41,7 @@
 
     <div
       v-else
-      class="flex h-[600px] flex-col items-center justify-center py-16 text-center"
+      class="flex h-[570px] flex-col items-center justify-center py-16 text-center"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +66,7 @@
     <!-- Pagination UI -->
     <div
       v-if="filteredData?.length"
-      class="flex items-center justify-center gap-1 text-sm"
+      class="mt-5 flex items-center justify-center gap-1 text-sm"
     >
       <!-- Previous Button -->
       <button
@@ -137,71 +133,19 @@
     <div class="loader text-warm-red"></div>
   </div>
 
-  <!-- Popup Modal -->
-  <div
-    v-if="showPopup"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150"
-  >
-    <div
-      class="relative flex h-[90%] w-[600px] items-center justify-center rounded-lg bg-white px-12 py-5 shadow-xl"
-    >
-      <button
-        @click="showPopup = false"
-        class="absolute top-3 right-4 cursor-pointer text-xl font-bold text-black"
-      >
-        ✕
-      </button>
-
-      <img :src="imageSrc" alt="popup image" class="max-h-full" />
-    </div>
-  </div>
+  <ImagePopup v-model:showImage="showImage" :imageSrc="imageSrc" />
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import {
-  formatDate,
-  calculateEntries,
-  formatMobileNumber,
-  convertUTCtoPH,
-  formatToPeso,
-} from '../../../utils/utils';
+import { keysArray, formatItemDisplay } from '../../../utils/utils';
+import ImagePopup from './ImagePopup.vue';
 
 const props = defineProps(['isLoading', 'filteredData']);
-
-const keysArray = ref([
-  'id',
-  'No. Of Entries',
-  'Full Name',
-  'Mobile Number',
-  'Email Address',
-  'Birthdate',
-  'Residential Address',
-  'Branch',
-  'Date of Purchase',
-  'Purchase Amount',
-  'Receipt / Invoice Number',
-  'Upload Receipt',
-  'Submitted at',
-]);
+const keysArrayTable = ['id', 'No. Of Entries', ...keysArray];
 
 const formatId = (index) => {
   return (currentPage.value - 1) * itemsPerPage + index + 1;
-};
-
-const formatItemDisplay = (itemName, entry) => {
-  if (itemName == 'No. Of Entries') {
-    return calculateEntries(entry['Purchase Amount']);
-  }
-  if (itemName == 'Mobile Number') return formatMobileNumber(entry[itemName]);
-  if (itemName == 'Purchase Amount') return formatToPeso(entry[itemName]);
-  if (itemName == 'Submitted at') return convertUTCtoPH(entry[itemName]);
-  if (itemName == 'Upload Receipt') return '';
-  if (['Birthdate', 'Date of Purchase'].includes(itemName)) {
-    return formatDate(entry[itemName]);
-  }
-
-  return entry[itemName];
 };
 
 const formatWidth = (itemName) => {
@@ -209,9 +153,9 @@ const formatWidth = (itemName) => {
     case 'id':
       return 'w-[40px] justify-center';
     case 'No. Of Entries':
-      return 'w-[80px] justify-center text-center';
+      return 'w-[60px] justify-center text-center';
     case 'Full Name':
-      return 'w-[210px]';
+      return 'w-[180px]';
     case 'Mobile Number':
       return 'w-[100px] justify-center';
     case 'Email Address':
@@ -235,12 +179,12 @@ const formatWidth = (itemName) => {
   }
 };
 
-const showPopup = ref(false);
+const showImage = ref(false);
 const imageSrc = ref('');
 
 const handleViewImage = (imgSrc) => {
   imageSrc.value = imgSrc;
-  showPopup.value = true;
+  showImage.value = true;
 };
 
 const itemsPerPage = 10;

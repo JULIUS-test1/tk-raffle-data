@@ -1,5 +1,12 @@
 <template>
   <div
+    v-if="isLoadingInfo"
+    class="bg-c-white flex min-h-[450px] flex-1/2 items-center justify-center rounded-lg"
+  >
+    <div class="loader-spin"></div>
+  </div>
+  <div
+    v-else
     class="bg-c-white min-h-[400px] flex-1/2 rounded-lg p-5"
     :class="formatBg()"
   >
@@ -17,12 +24,12 @@
           </div>
           <div class="mt-[2px]">{{ item.name }}</div>
         </div>
-        <button
+        <div
           class="hover:text-warm-red cursor-pointer hover:underline"
-          @click="$emit('handleViewInfo', item.name)"
+          @click="$emit('handleViewInfo', item.invoiceNumber)"
         >
           view
-        </button>
+        </div>
       </div>
 
       <h2 class="mt-10 text-center">
@@ -52,6 +59,7 @@ const props = defineProps([
   'roundName',
   'winnersCount',
   'roundWinners',
+  'isLoadingInfo',
 ]);
 
 defineEmits(['drawWinners', 'handleViewInfo']);
@@ -88,3 +96,21 @@ const formatDate = (dateStr) => {
   return dayjs(date).format('MM-DD-YYYY hh:mm:ss A');
 };
 </script>
+
+<style scoped>
+.loader-spin {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(farthest-side, #d14124 94%, #0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%, #d14124);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+  animation: l13 1s infinite linear;
+}
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+</style>

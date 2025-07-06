@@ -1,32 +1,34 @@
 <template>
-  <HeaderComponent v-model="activeTab" />
+  <div class="mx-auto w-full max-w-[1600px]">
+    <HeaderComponent v-model="activeTab" />
 
-  <main class="pb-20">
-    <template v-if="activeTab == 0">
-      <div
-        class="bg-warm-red mx-4 mt-3 flex flex-col gap-x-4 rounded p-4 sm:mx-10"
-      >
-        <SearchInput v-model="searchQuery" @handleSearch="handleSearch" />
+    <main class="pb-20">
+      <template v-if="activeTab == 0">
+        <div
+          class="bg-warm-red mx-4 mt-4 flex flex-col gap-x-4 rounded p-4 sm:mx-10"
+        >
+          <SearchInput v-model="searchQuery" @handleSearch="handleSearch" />
 
-        <div class="flex flex-col gap-x-4 md:flex-row">
-          <FilterByBranch
-            v-model="selectedBranch"
-            :uniqueBranches="uniqueBranches"
-          />
-          <FilterByDate v-model="selectedDate" />
+          <div class="flex flex-col gap-x-4 md:flex-row">
+            <FilterByBranch
+              v-model="selectedBranch"
+              :uniqueBranches="uniqueBranches"
+            />
+            <FilterByDate v-model="selectedDate" />
+          </div>
         </div>
-      </div>
 
-      <TableData :isLoading="isLoading" :filteredData="filteredData" />
-    </template>
+        <TableData :isLoading="isLoading" :filteredData="filteredData" />
+      </template>
 
-    <RaffleData
-      v-if="activeTab == 1"
-      :isLoading="isLoading"
-      :tableData="tableData"
-      @update:isLoading="isLoading = $event"
-    />
-  </main>
+      <RaffleData
+        v-if="activeTab == 1"
+        :isLoading="isLoading"
+        :tableData="tableData"
+        @update:isLoading="isLoading = $event"
+      />
+    </main>
+  </div>
 </template>
 
 <script setup>

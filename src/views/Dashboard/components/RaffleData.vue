@@ -1,24 +1,45 @@
 <template>
-  <div class="mx-4 mt-5 sm:mx-10">
+  <div class="mx-4 mt-4 sm:mx-10">
     <template v-if="!isLoading">
-      <h2 class="my-4 text-2xl md:text-4xl">
-        Total Raffle Entries: {{ totalEntries }}
-      </h2>
-      <h2 class="my-4 text-2xl md:text-4xl">
-        Total Remaining Entries: {{ totalRemainingEntries }}
-      </h2>
-      <h2 class="my-4 text-2xl md:text-4xl">
-        Total Winners: {{ totalWinnersCount }}
-      </h2>
+      <div class="flex flex-col justify-center gap-5 md:flex-row">
+        <div
+          class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
+        >
+          <h2 class="text-c-beige text-center text-2xl">
+            Total Raffle Entries
+          </h2>
+          <div class="text-c-beige mt-3 text-2xl">
+            {{ totalEntries }}
+          </div>
+        </div>
+        <div
+          class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
+        >
+          <h2 class="text-c-beige text-center text-2xl">
+            Total Remaining Entries
+          </h2>
+          <div class="text-c-beige mt-3 text-2xl">
+            {{ totalRemainingEntries }}
+          </div>
+        </div>
+        <div
+          class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
+        >
+          <h2 class="text-c-beige text-center text-2xl">Total Winners</h2>
+          <div class="text-c-beige mt-3 text-2xl">
+            {{ totalWinnersCount }}
+          </div>
+        </div>
+      </div>
 
       <button
-        class="bg-warm-red min-w-[150px] cursor-pointer rounded-md px-4 py-2 text-center text-white"
+        class="bg-warm-red text-c-white mx-auto mt-5 mb-10 block min-w-[150px] cursor-pointer rounded-md px-4 py-2 text-center"
         @click="showEntries = !showEntries"
       >
         {{ showEntries ? 'Hide' : 'Show' }} All Entries
       </button>
 
-      <div v-if="showEntries" class="mt-10 flex flex-wrap gap-3">
+      <div v-if="showEntries" class="flex flex-wrap gap-3">
         <div
           v-for="(item, idx) in allEntries"
           :key="idx"
@@ -26,7 +47,7 @@
           :class="formatBg(item.roundName)"
         >
           <template v-if="item.isWin">
-            {{ item.id }}. {{ item.name }}
+            {{ item.winCountId }}. {{ item.name }}
           </template>
           <template v-else>
             {{ item.name }}
@@ -34,13 +55,14 @@
         </div>
       </div>
 
-      <h2 class="mt-20 mb-5 text-xl">Consolation Prizes (38 winners)</h2>
+      <h2 class="mt-10 mb-5 text-2xl">Consolation Prizes (38 winners)</h2>
       <div class="flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10">
         <RaffleCard
           title="10 Winners of Gift Box #9"
           roundName="firstRound"
           :winnersCount="10"
           :roundWinners="firstRound"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
@@ -49,6 +71,7 @@
           roundName="secondRound"
           :winnersCount="10"
           :roundWinners="secondRound"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
@@ -61,6 +84,7 @@
           roundName="thirdRound"
           :winnersCount="10"
           :roundWinners="thirdRound"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
@@ -69,12 +93,13 @@
           roundName="fourthRound"
           :winnersCount="8"
           :roundWinners="fourthRound"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
       </div>
 
-      <h2 class="mt-20 mb-5 text-xl">Grand Prizes (3 winners)</h2>
+      <h2 class="mt-10 mb-5 text-2xl">Grand Prizes (3 winners)</h2>
       <div class="flex flex-col gap-y-10 md:flex-row md:gap-x-10">
         <RaffleCard
           class="mx-auto !min-h-[200px] w-full md:w-1/2"
@@ -82,6 +107,7 @@
           roundName="finalRound1"
           :winnersCount="1"
           :roundWinners="finalRound1"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
@@ -91,6 +117,7 @@
           roundName="finalRound2"
           :winnersCount="1"
           :roundWinners="finalRound2"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
@@ -100,6 +127,7 @@
           roundName="finalRound3"
           :winnersCount="1"
           :roundWinners="finalRound3"
+          :isLoadingInfo="isLoadingInfo"
           @drawWinners="(n, c) => drawWinners(n, c)"
           @handleViewInfo="handleViewInfo"
         />
@@ -110,79 +138,37 @@
       <div class="loader text-warm-red"></div>
     </div>
 
-    <!-- Popup Modal -->
-    <div
-      v-if="showPopup"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150"
-    >
-      <div
-        class="relative min-h-fit w-[600px] rounded-lg bg-white px-6 py-5 shadow-xl"
-      >
-        <button
-          @click="showPopup = false"
-          class="absolute top-3 right-4 cursor-pointer text-xl font-bold text-black"
-        >
-          ✕
-        </button>
-        <h2 class="mb-4 text-center">Winner Informations</h2>
-        <template v-for="(entry, index) in userInfo" :key="index">
-          <div
-            class="border1 flex min-h-10 w-full items-center"
-            v-for="(item, idx) in keysArray"
-            :key="idx"
-          >
-            <div class="flex-1">{{ item }}:</div>
-            <div class="flex-1">
-              <span
-                v-if="item == 'Upload Receipt'"
-                class="hover:text-warm-red cursor-pointer underline"
-                @click="handleViewImage(entry['Upload Receipt'])"
-              >
-                view
-              </span>
-              <template v-else>{{ formatItemDisplay(item, entry) }}</template>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
+    <UserInfoPopup
+      v-model:showUserInfo="showUserInfo"
+      :userInfo="userInfo"
+      :showImage="showImage"
+      @handleViewImage="handleViewImage"
+    />
+
+    <ImagePopup v-model:showImage="showImage" :imageSrc="imageSrc" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { db } from '../../../firebase'; // path to your firebase.js
 import { collection, addDoc, getDocs, Timestamp } from 'firebase/firestore';
+import { keysArray } from '../../../utils/utils';
 import RaffleCard from './RaffleCard.vue';
-import {
-  convertUTCtoPH,
-  formatDate,
-  formatMobileNumber,
-  formatToPeso,
-} from '../../../utils/utils';
+import UserInfoPopup from './UserInfoPopup.vue';
+import ImagePopup from './ImagePopup.vue';
 
 const props = defineProps(['isLoading', 'tableData']);
 const emit = defineEmits(['update:isLoading']);
 
-const keysArray = [
-  'Full Name',
-  'Mobile Number',
-  'Email Address',
-  'Birthdate',
-  'Residential Address',
-  'Branch',
-  'Date of Purchase',
-  'Purchase Amount',
-  'Receipt / Invoice Number',
-  'Upload Receipt',
-  'Submitted at',
-];
+const keysArrayRaffle = ['No. Of Entries', ...keysArray];
 
 const showEntries = ref(false);
-const showPopup = ref(false);
-const userInfo = ref({});
 const allEntries = ref([]);
 const drawnRounds = ref([]);
+const isLoadingInfo = ref(false);
+const showUserInfo = ref(false);
+const userInfo = ref({});
 
 const roundList = [
   'firstRound',
@@ -210,26 +196,24 @@ const finalRound2 = getWinners('finalRound2');
 const finalRound3 = getWinners('finalRound3');
 
 const totalEntries = computed(() => allEntries.value.length);
-const totalRemainingEntries = computed(() => {
-  const wonIds = drawnRounds.value.flatMap((r) => r.winners.map((w) => w.id));
-  return allEntries.value.filter((e) => !wonIds.includes(e.id))?.length;
-});
 const totalWinnersCount = computed(() => {
   return drawnRounds.value.reduce((total, round) => {
     return total + (round.winners?.length || 0);
   }, 0);
 });
+const totalRemainingEntries = computed(() => {
+  return totalEntries.value - totalWinnersCount.value;
+});
 
-onMounted(() => {
-  loadAllWinners();
+onMounted(async () => {
   allEntries.value = getRaffleEntries(props.tableData);
+  nextTick(() => {
+    loadAllWinners();
+  });
 
   setTimeout(() => {
-    // allEntries.value = getRaffleEntries(props.tableData);
     emit('update:isLoading', false);
-  }, 500);
-
-  // fetchTallyInsight();
+  }, 1000);
 });
 
 const formatBg = (roundName) => {
@@ -246,10 +230,16 @@ const formatBg = (roundName) => {
 };
 
 const loadAllWinners = async () => {
+  isLoadingInfo.value = true;
+
   try {
     await Promise.all(roundList.map((item) => fetchWinners(item)));
   } catch (error) {
     console.error('❌ Error fetching:', error);
+  } finally {
+    setTimeout(() => {
+      isLoadingInfo.value = false;
+    }, 1000);
   }
 };
 
@@ -260,10 +250,17 @@ const getRaffleEntries = (data) => {
   data.forEach((entry) => {
     const name = entry['Full Name'];
     const amount = Number(entry['Purchase Amount']) || 0;
+    const invoiceNumber = entry['Receipt / Invoice Number'];
     const raffleCount = Math.floor(amount / 750);
 
     Array.from({ length: raffleCount }).forEach(() => {
-      entries.push({ id: id++, name, roundName: '-', isWin: false });
+      entries.push({
+        id: id++,
+        name,
+        invoiceNumber,
+        roundName: '-',
+        isWin: false,
+      });
     });
   });
 
@@ -287,7 +284,7 @@ const pickWinners = (entries, previousWinners = [], roundName, count) => {
     // Skip if name already won this round
     if (winnerNames.has(candidate.name)) continue;
 
-    candidate.id = id;
+    candidate.winCountId = id;
     candidate.isWin = true;
     candidate.roundName = roundName;
     candidate.date = new Date();
@@ -341,7 +338,7 @@ const fetchWinners = async (roundName) => {
     const querySnapshot = await getDocs(collection(db, roundName));
 
     if (querySnapshot.empty) {
-      console.warn(`⚠️ No winners found in '${roundName}'`);
+      // console.warn(`⚠️ No winners found in '${roundName}'`);
       return [];
     }
 
@@ -351,10 +348,44 @@ const fetchWinners = async (roundName) => {
       round: data[0].roundName,
       winners: data,
     });
+
+    allEntries.value = allEntries.value.map((item) => {
+      const update = data.find((u) => u.id == item.id);
+      return update ? update : item;
+    });
   } catch (error) {
     console.error(`❌ Error fetching winners from '${roundName}':`, error);
     return [];
   }
+};
+
+const filterUserData = (data) => {
+  return data.map((entry) => {
+    const filtered = {};
+    keysArrayRaffle.forEach((key) => {
+      if (entry[key] !== undefined) {
+        filtered[key] = entry[key];
+      }
+    });
+    return filtered;
+  });
+};
+
+const handleViewInfo = (invoiceNumber) => {
+  const data = props.tableData.filter((_) => {
+    return _['Receipt / Invoice Number'] == invoiceNumber;
+  });
+  userInfo.value = filterUserData(data);
+
+  showUserInfo.value = true;
+};
+
+const showImage = ref(false);
+const imageSrc = ref('');
+
+const handleViewImage = (imgSrc) => {
+  imageSrc.value = imgSrc;
+  showImage.value = true;
 };
 
 // const insights = ref(null);
@@ -372,37 +403,4 @@ const fetchWinners = async (roundName) => {
 //   insights.value = await res.json();
 //   console.log(insights.value, 333);
 // };
-
-const formatItemDisplay = (itemName, entry) => {
-  if (itemName == 'Mobile Number') return formatMobileNumber(entry[itemName]);
-  if (itemName == 'Purchase Amount') return formatToPeso(entry[itemName]);
-  if (itemName == 'Submitted at') return convertUTCtoPH(entry[itemName]);
-  if (itemName == 'Upload Receipt') return '';
-  if (['Birthdate', 'Date of Purchase'].includes(itemName)) {
-    return formatDate(entry[itemName]);
-  }
-
-  return entry[itemName];
-};
-
-const filterUserData = (data, keysArray) => {
-  return data.map((entry) => {
-    const filtered = {};
-    keysArray.forEach((key) => {
-      if (entry[key] !== undefined) {
-        filtered[key] = entry[key];
-      }
-    });
-    return filtered;
-  });
-};
-
-const handleViewInfo = (name) => {
-  console.log(name);
-
-  const data = props.tableData.filter((_) => _['Full Name'] == name);
-  userInfo.value = filterUserData(data, keysArray);
-
-  showPopup.value = true;
-};
 </script>
