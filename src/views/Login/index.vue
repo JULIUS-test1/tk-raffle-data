@@ -1,6 +1,6 @@
 <template>
   <div class="bg-warm-red flex min-h-screen items-center justify-center px-4">
-    <div class="w-full max-w-md rounded-lg bg-[#f4f2ec] p-8 shadow-lg">
+    <div class="bg-c-white relative w-full max-w-md rounded-lg p-8 shadow-lg">
       <img
         src="/src/assets/tpk-logo-red.png"
         alt="tpk-logo"
@@ -92,10 +92,20 @@
         </button>
       </form>
 
-      <p v-if="error" class="mt-4 text-center text-sm text-red-500">
-        {{ error }}
-      </p>
+      <div
+        v-if="error"
+        class="bg-c-white absolute -top-16 left-0 w-full rounded-md p-3 text-center text-red-500"
+      >
+        Invalid email or password.
+      </div>
     </div>
+  </div>
+
+  <div
+    v-if="isChecking"
+    class="fixed inset-0 flex h-screen w-full items-center justify-center bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150"
+  >
+    <div class="loader-spin"></div>
   </div>
 </template>
 
@@ -108,12 +118,54 @@ const email = ref('');
 const password = ref('');
 const error = ref('');
 const isPasswordVisible = ref(false);
+const isChecking = ref(false);
 
 const handleLogin = async () => {
+  isChecking.value = true;
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
+    setTimeout(() => {
+      isChecking.value = false;
+    }, 1000);
   } catch (err) {
-    error.value = 'Invalid username or password.';
+    setTimeout(() => {
+      error.value = 'Invalid email or password.';
+      isChecking.value = false;
+    }, 1000);
   }
 };
 </script>
+
+<style scoped>
+.loader-spin {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  -webkit-mask: conic-gradient(from 15deg, #0000, #000);
+  animation: l26 1s infinite steps(12);
+}
+.loader-spin,
+.loader-spin:before,
+.loader-spin:after {
+  background:
+    radial-gradient(closest-side at 50% 12.5%, #d14124 96%, #0000) 50% 0/20% 80%
+      repeat-y,
+    radial-gradient(closest-side at 12.5% 50%, #d14124 96%, #0000) 0 50%/80% 20%
+      repeat-x;
+}
+.loader-spin:before,
+.loader-spin:after {
+  content: '';
+  grid-area: 1/1;
+  transform: rotate(30deg);
+}
+.loader-spin:after {
+  transform: rotate(60deg);
+}
+
+@keyframes l26 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+</style>
