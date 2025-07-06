@@ -38,10 +38,12 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted } from 'vue';
-import { keysArrayRaffle, formatItemDisplay } from '../../../utils/utils';
+import { keysArray, formatItemDisplay } from '../../../utils/utils';
 
 const props = defineProps(['showUserInfo', 'userInfo', 'showImage']);
 const emit = defineEmits(['update:showUserInfo', 'handleViewImage']);
+
+const keysArrayRaffle = ['No. Of Entries', ...keysArray];
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);
