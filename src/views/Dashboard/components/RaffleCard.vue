@@ -84,6 +84,10 @@ const formatBg = () => {
 };
 
 const formatDate = (dateStr) => {
+  if (dateStr instanceof Date) {
+    return dayjs(dateStr).format('MM-DD-YYYY hh:mm:ss A');
+  }
+
   const timestamp = {
     seconds: dateStr.seconds,
     nanoseconds: dateStr.nanoseconds,

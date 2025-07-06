@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-4 mt-4 sm:mx-10">
+  <div class="m-4 sm:mx-10 sm:my-5">
     <template v-if="!isLoading">
       <div class="flex flex-col justify-center gap-5 md:flex-row">
         <div

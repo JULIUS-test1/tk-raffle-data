@@ -28,18 +28,25 @@
 
     <div class="flex items-center gap-x-7 px-3">
       <div
-        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1"
+        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1 text-sm md:text-base"
         :class="modelValue == 0 ? 'border-c-beige' : 'border-transparent'"
         @click="$emit('update:modelValue', 0)"
       >
         Raffle Entries
       </div>
       <div
-        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1"
+        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1 text-sm md:text-base"
         :class="modelValue == 1 ? 'border-c-beige' : 'border-transparent'"
         @click="$emit('update:modelValue', 1)"
       >
         Pick Winners
+      </div>
+      <div
+        class="text-c-beige w-fit cursor-pointer border-b-[3px] px-1 pb-1 text-sm md:text-base"
+        :class="modelValue == 2 ? 'border-c-beige' : 'border-transparent'"
+        @click="$emit('update:modelValue', 2)"
+      >
+        Post Analysis
       </div>
     </div>
   </header>

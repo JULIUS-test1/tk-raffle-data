@@ -27,6 +27,12 @@
         :tableData="tableData"
         @update:isLoading="isLoading = $event"
       />
+
+      <PostAnalysis
+        v-if="activeTab == 2"
+        :isLoading="isLoading"
+        :tableData="tableData"
+      />
     </main>
   </div>
 </template>
@@ -38,6 +44,7 @@ import FilterByBranch from './components/FilterByBranch.vue';
 import FilterByDate from './components/FilterByDate.vue';
 import TableData from './components/TableData.vue';
 import RaffleData from './components/RaffleData.vue';
+import PostAnalysis from './components/PostAnalysis.vue';
 import Papa from 'papaparse';
 import { onMounted, ref, computed, watch } from 'vue';
 import { convertUTCtoPH, formatDate } from '../../utils/utils';
@@ -58,7 +65,7 @@ watch(activeTab, (nV, oV) => {
   if (nV == 0) {
     fetchData();
   }
-  if (nV == 1) {
+  if (nV == 1 || nV == 2) {
     isLoading.value = true;
   }
 });
