@@ -2,7 +2,7 @@
   <!-- <template v-if="!isLoading"> -->
   <div class="m-4">
     <h1 class="mb-6 text-2xl font-bold md:text-3xl">
-      📊 Post Submission Analysis
+      📊 Insights
     </h1>
 
     <section class="mb-10">

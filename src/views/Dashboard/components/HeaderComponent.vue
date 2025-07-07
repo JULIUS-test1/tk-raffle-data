@@ -46,7 +46,7 @@
         :class="modelValue == 2 ? 'border-c-beige' : 'border-transparent'"
         @click="$emit('update:modelValue', 2)"
       >
-        Post Analysis
+        Insights
       </div>
     </div>
   </header>
