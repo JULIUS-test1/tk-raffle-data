@@ -1,8 +1,8 @@
 <template>
   <header
-    class="bg-warm-red flex min-h-30 w-full flex-col justify-between px-4 pt-4 pb-[2px] shadow-2xs sm:px-10"
+    class="bg-warm-red min-h-30 w-full px-4 pt-4 pb-[2px] shadow-2xs sm:px-10"
   >
-    <div class="mx-auto w-full max-w-[1600px]">
+    <div class="mx-auto w-full h-full max-w-[1600px] flex flex-col justify-between">
       <div class="flex justify-between ">
         <img src="/src/assets/tpk-logo-white.png" alt="tpk-logo" class="w-40" />
 
