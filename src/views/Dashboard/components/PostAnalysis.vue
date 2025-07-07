@@ -6,19 +6,19 @@
     </h1>
 
     <section class="mb-10">
-      <h2 class="mb-3 text-xl font-semibold">1. Entries per Branch</h2>
+      <h2 class="mb-3 text-xl font-semibold">Entries per Branch</h2>
       <Bar :data="entriesPerBranch" :options="barOptions" />
     </section>
 
     <section class="mb-10">
       <h2 class="mb-2 text-xl font-semibold">
-        2. Entries per Participant (Full Name)
+        Submission per Participant (Full Name)
       </h2>
       <Bar :data="entriesPerPerson" :options="barOptions" />
     </section>
 
     <section class="mb-10">
-      <h2 class="mb-2 text-xl font-semibold">3. Total Purchase per Date</h2>
+      <h2 class="mb-2 text-xl font-semibold">Total Purchase per Date</h2>
       <Line :data="totalPurchasePerDate" :options="barOptions" />
     </section>
 
@@ -30,16 +30,7 @@
     </section>
 
     <section class="mb-10">
-      <h2 class="mb-2 text-xl font-semibold">
-        5. Entry Distribution by Branch
-      </h2>
-      <div class="mx-auto max-h-[800px] max-w-[800px]">
-        <Pie :data="branchShare" :options="barOptions" />
-      </div>
-    </section>
-
-    <section class="mb-10">
-      <h2 class="mb-2 text-xl font-semibold">5. Total Sales per Branch</h2>
+      <h2 class="mb-2 text-xl font-semibold">Total Sales per Branch</h2>
       <Bar :data="totalSalesPerBranch" :options="barOptions" />
     </section>
   </div>
