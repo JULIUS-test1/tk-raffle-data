@@ -1,6 +1,7 @@
 <template>
+  <HeaderComponent v-model="activeTab" />
+
   <div class="mx-auto w-full max-w-[1600px]">
-    <HeaderComponent v-model="activeTab" />
 
     <main class="pb-20">
       <template v-if="activeTab == 0">

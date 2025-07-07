@@ -24,7 +24,7 @@
 
     <section class="mb-10">
       <h2 class="mb-2 text-xl font-semibold">
-        4. Total & Average Purchase per Branch
+        Total & Average Purchase per Branch
       </h2>
       <Bar :data="purchasePerBranch" :options="barOptions" />
     </section>
