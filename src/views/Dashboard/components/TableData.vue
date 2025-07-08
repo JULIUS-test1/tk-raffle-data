@@ -189,8 +189,6 @@ const handleViewImage = (imgSrc) => {
       .trim()
       .split('\n')
       .filter((url) => url.length > 0);
-
-    console.log(imageSrcList.value);
   }
 
   showImage.value = true;
