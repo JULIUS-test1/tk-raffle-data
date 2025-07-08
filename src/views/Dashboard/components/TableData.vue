@@ -1,51 +1,79 @@
 <template>
-  <template v-if="!isLoading">
-    <div v-if="filteredData?.length" class="mx-auto overflow-auto px-2">
-      <div class="mx-auto flex w-fit">
+  <div v-if="filteredData?.length" class="mx-auto overflow-auto px-2">
+    <div class="mx-auto flex w-fit">
+      <div
+        v-for="(item, idx) in keysArrayTable"
+        :key="idx"
+        class="font-sb !text-maroon border-maroon flex shrink-0 items-center border-b-2 px-1 py-3 text-xs leading-5 !uppercase"
+        :class="formatWidth(item)"
+      >
+        {{ item == 'Submitted at' ? 'Date Submitted' : item }}
+      </div>
+    </div>
+    <div class="mx-auto h-[570px] w-fit">
+      <div
+        class="bg-c-white my-3 flex w-fit rounded-md"
+        v-for="(entry, index) in paginatedItems"
+        :key="index"
+      >
         <div
           v-for="(item, idx) in keysArrayTable"
           :key="idx"
-          class="font-sb !text-maroon border-maroon flex shrink-0 items-center border-b-2 px-1 py-3 text-xs leading-5 !uppercase"
+          class="font-sb text-maroon flex shrink-0 px-1 py-3 text-xs leading-5 break-all"
           :class="formatWidth(item)"
         >
-          {{ item == 'Submitted at' ? 'Date Submitted' : item }}
-        </div>
-      </div>
-      <div class="mx-auto h-[570px] w-fit">
-        <div
-          class="bg-c-white my-3 flex w-fit rounded-md"
-          v-for="(entry, index) in paginatedItems"
-          :key="index"
-        >
-          <div
-            v-for="(item, idx) in keysArrayTable"
-            :key="idx"
-            class="font-sb text-maroon flex shrink-0 px-1 py-3 text-xs leading-5 break-all"
-            :class="formatWidth(item)"
+          <span
+            v-if="item == 'Upload Receipt'"
+            class="cursor-pointer hover:underline"
+            @click="handleViewImage(entry['Upload Receipt'])"
           >
-            <span
-              v-if="item == 'Upload Receipt'"
-              class="cursor-pointer hover:underline"
-              @click="handleViewImage(entry['Upload Receipt'])"
-            >
-              view
-            </span>
+            view
+          </span>
 
-            {{
-              item == 'id' ? formatId(index) : formatItemDisplay(item, entry)
-            }}
-          </div>
+          {{ item == 'id' ? formatId(index) : formatItemDisplay(item, entry) }}
         </div>
       </div>
     </div>
+  </div>
 
-    <div
-      v-else
-      class="flex h-[570px] flex-col items-center justify-center py-16 text-center"
+  <div
+    v-else
+    class="flex h-[570px] flex-col items-center justify-center py-16 text-center"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="text-warm-red mb-6 h-20 w-20"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="1.5"
+        d="M21 21l-4.35-4.35m0 0A7 7 0 103.6 9.6a7 7 0 0013.05 7.05z"
+      />
+    </svg>
+    <p class="text-warm-red mb-2 text-3xl">No results found</p>
+    <p class="text-maroon text-lg">
+      Try adjusting your filters or search term.
+    </p>
+  </div>
+
+  <!-- Pagination UI -->
+  <div
+    v-if="filteredData?.length"
+    class="mt-5 flex items-center justify-center gap-1 text-sm"
+  >
+    <!-- Previous Button -->
+    <button
+      @click="goToPage(currentPage - 1)"
+      :disabled="currentPage === 1"
+      class="cursor-pointer rounded bg-gray-100 p-2 hover:bg-gray-200 disabled:opacity-50"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="text-warm-red mb-6 h-20 w-20"
+        class="h-4 w-4"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -53,87 +81,55 @@
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke-width="1.5"
-          d="M21 21l-4.35-4.35m0 0A7 7 0 103.6 9.6a7 7 0 0013.05 7.05z"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"
         />
       </svg>
-      <p class="text-warm-red mb-2 text-3xl">No results found</p>
-      <p class="text-maroon text-lg">
-        Try adjusting your filters or search term.
-      </p>
-    </div>
+    </button>
 
-    <!-- Pagination UI -->
-    <div
-      v-if="filteredData?.length"
-      class="mt-5 flex items-center justify-center gap-1 text-sm"
+    <!-- Page Numbers -->
+    <button
+      v-for="page in pagesToShow"
+      :key="page"
+      @click="goToPage(page)"
+      :class="[
+        'flex h-8 w-8 cursor-pointer items-center justify-center rounded pt-[2px] transition',
+        page === currentPage
+          ? 'bg-warm-red font-bold text-white'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+      ]"
     >
-      <!-- Previous Button -->
-      <button
-        @click="goToPage(currentPage - 1)"
-        :disabled="currentPage === 1"
-        class="cursor-pointer rounded bg-gray-100 p-2 hover:bg-gray-200 disabled:opacity-50"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </button>
+      {{ page }}
+    </button>
 
-      <!-- Page Numbers -->
-      <button
-        v-for="page in pagesToShow"
-        :key="page"
-        @click="goToPage(page)"
-        :class="[
-          'flex h-8 w-8 cursor-pointer items-center justify-center rounded pt-[2px] transition',
-          page === currentPage
-            ? 'bg-warm-red font-bold text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-        ]"
+    <!-- Next Button -->
+    <button
+      @click="goToPage(currentPage + 1)"
+      :disabled="currentPage === totalPages"
+      class="cursor-pointer rounded bg-gray-100 p-2 hover:bg-gray-200 disabled:opacity-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
       >
-        {{ page }}
-      </button>
-
-      <!-- Next Button -->
-      <button
-        @click="goToPage(currentPage + 1)"
-        :disabled="currentPage === totalPages"
-        class="cursor-pointer rounded bg-gray-100 p-2 hover:bg-gray-200 disabled:opacity-50"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </button>
-    </div>
-  </template>
-
-  <div v-else class="flex h-[600px] w-full items-center justify-center">
-    <div class="loader text-warm-red"></div>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+    </button>
   </div>
 
-  <ImagePopup v-model:showImage="showImage" :imageSrc="imageSrc" />
+  <ImagePopup
+    v-model:showImage="showImage"
+    :imageSrc="imageSrc"
+    :imageSrcList="imageSrcList"
+  />
 </template>
 
 <script setup>
@@ -141,7 +137,7 @@ import { ref, computed } from 'vue';
 import { keysArray, formatItemDisplay } from '../../../utils/utils';
 import ImagePopup from './ImagePopup.vue';
 
-const props = defineProps(['isLoading', 'filteredData']);
+const props = defineProps(['filteredData']);
 const keysArrayTable = ['id', 'No. Of Entries', ...keysArray];
 
 const formatId = (index) => {
@@ -181,9 +177,22 @@ const formatWidth = (itemName) => {
 
 const showImage = ref(false);
 const imageSrc = ref('');
+const imageSrcList = ref([]);
 
 const handleViewImage = (imgSrc) => {
-  imageSrc.value = imgSrc;
+  const count = (imgSrc.match(/https:/g) || []).length;
+
+  if (count == 1) {
+    imageSrc.value = imgSrc;
+  } else {
+    imageSrcList.value = imgSrc
+      .trim()
+      .split('\n')
+      .filter((url) => url.length > 0);
+
+    console.log(imageSrcList.value);
+  }
+
   showImage.value = true;
 };
 

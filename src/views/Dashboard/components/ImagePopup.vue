@@ -13,7 +13,22 @@
         ✕
       </button>
 
-      <img :src="imageSrc" alt="Receipt image" class="max-h-full" />
+      <img
+        v-if="imageSrc"
+        :src="imageSrc"
+        alt="Receipt image"
+        class="max-h-full"
+      />
+
+      <div v-else class="flex h-full flex-col gap-y-8 overflow-y-auto">
+        <img
+          v-for="(item, idx) in imageSrcList"
+          :key="idx"
+          :src="item"
+          alt="Receipt image"
+          class="max-h-full"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -21,7 +36,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue';
 
-const props = defineProps(['showImage', 'imageSrc']);
+const props = defineProps(['showImage', 'imageSrc', 'imageSrcList']);
 const emit = defineEmits(['update:showImage']);
 
 onMounted(() => {

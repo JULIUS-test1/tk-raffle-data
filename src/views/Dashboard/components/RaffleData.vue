@@ -1,141 +1,133 @@
 <template>
   <div class="m-4 sm:mx-10 sm:my-5">
-    <template v-if="!isLoading">
-      <div class="flex flex-col justify-center gap-5 md:flex-row">
-        <div
-          class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
-        >
-          <h2 class="text-c-beige text-center text-2xl">
-            Total Raffle Entries
-          </h2>
-          <div class="text-c-beige mt-3 text-2xl">
-            {{ totalEntries }}
-          </div>
-        </div>
-        <div
-          class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
-        >
-          <h2 class="text-c-beige text-center text-2xl">
-            Total Remaining Entries
-          </h2>
-          <div class="text-c-beige mt-3 text-2xl">
-            {{ totalRemainingEntries }}
-          </div>
-        </div>
-        <div
-          class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
-        >
-          <h2 class="text-c-beige text-center text-2xl">Total Winners</h2>
-          <div class="text-c-beige mt-3 text-2xl">
-            {{ totalWinnersCount }}
-          </div>
-        </div>
-      </div>
-
-      <button
-        class="bg-warm-red text-c-white mx-auto mt-5 mb-10 block min-w-[150px] cursor-pointer rounded-md px-4 py-2 text-center"
-        @click="showEntries = !showEntries"
+    <div class="flex flex-col justify-center gap-5 md:flex-row">
+      <div
+        class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
       >
-        {{ showEntries ? 'Hide' : 'Show' }} All Entries
-      </button>
-
-      <div v-if="showEntries" class="flex flex-wrap gap-3">
-        <div
-          v-for="(item, idx) in allEntries"
-          :key="idx"
-          class="bg-c-white h-fit rounded px-3 py-2"
-          :class="formatBg(item.roundName)"
-        >
-          <template v-if="item.isWin">
-            {{ item.winCountId }}. {{ item.name }}
-          </template>
-          <template v-else>
-            {{ item.name }}
-          </template>
+        <h2 class="text-c-beige text-center text-2xl">Total Raffle Entries</h2>
+        <div class="text-c-beige mt-3 text-2xl">
+          {{ totalEntries }}
         </div>
-      </div>
-
-      <h2 class="mt-10 mb-5 text-2xl">Consolation Prizes (38 winners)</h2>
-      <div class="flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10">
-        <RaffleCard
-          title="10 Winners of Gift Box #9"
-          roundName="firstRound"
-          :winnersCount="10"
-          :roundWinners="firstRound"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
-        <RaffleCard
-          title="10 Winners of 1,000 Gift Certificates"
-          roundName="secondRound"
-          :winnersCount="10"
-          :roundWinners="secondRound"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
       </div>
       <div
-        class="mt-10 flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10"
+        class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
       >
-        <RaffleCard
-          title="10 Winners of 1,500 Gift Certificates"
-          roundName="thirdRound"
-          :winnersCount="10"
-          :roundWinners="thirdRound"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
-        <RaffleCard
-          title="8 Winners of 2,000 Gift Certificates"
-          roundName="fourthRound"
-          :winnersCount="8"
-          :roundWinners="fourthRound"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
+        <h2 class="text-c-beige text-center text-2xl">
+          Total Remaining Entries
+        </h2>
+        <div class="text-c-beige mt-3 text-2xl">
+          {{ totalRemainingEntries }}
+        </div>
       </div>
-
-      <h2 class="mt-10 mb-5 text-2xl">Grand Prizes (3 winners)</h2>
-      <div class="flex flex-col gap-y-10 md:flex-row md:gap-x-10">
-        <RaffleCard
-          class="mx-auto !min-h-[200px] w-full md:w-1/2"
-          title="Trip to Boracay"
-          roundName="finalRound1"
-          :winnersCount="1"
-          :roundWinners="finalRound1"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
-        <RaffleCard
-          class="mx-auto !min-h-[200px] w-full md:w-1/2"
-          title="Trip to Discovery Samal"
-          roundName="finalRound2"
-          :winnersCount="1"
-          :roundWinners="finalRound2"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
-        <RaffleCard
-          class="mx-auto !min-h-[200px] w-full md:w-1/2"
-          title="Trip to Hong Kong Disneyland"
-          roundName="finalRound3"
-          :winnersCount="1"
-          :roundWinners="finalRound3"
-          :isLoadingInfo="isLoadingInfo"
-          @drawWinners="(n, c) => drawWinners(n, c)"
-          @handleViewInfo="handleViewInfo"
-        />
+      <div
+        class="bg-warm-red flex min-w-[250px] flex-col items-center rounded-lg px-6 py-4"
+      >
+        <h2 class="text-c-beige text-center text-2xl">Total Winners</h2>
+        <div class="text-c-beige mt-3 text-2xl">
+          {{ totalWinnersCount }}
+        </div>
       </div>
-    </template>
+    </div>
 
-    <div v-else class="flex h-[600px] w-full items-center justify-center">
-      <div class="loader text-warm-red"></div>
+    <button
+      class="bg-warm-red text-c-white mx-auto mt-5 mb-10 block min-w-[150px] cursor-pointer rounded-md px-4 py-2 text-center"
+      @click="showEntries = !showEntries"
+    >
+      {{ showEntries ? 'Hide' : 'Show' }} All Entries
+    </button>
+
+    <div v-if="showEntries" class="flex flex-wrap gap-3">
+      <div
+        v-for="(item, idx) in allEntries"
+        :key="idx"
+        class="bg-c-white h-fit rounded px-3 py-2"
+        :class="formatBg(item.roundName)"
+      >
+        <template v-if="item.isWin">
+          {{ item.winCountId }}. {{ item.name }}
+        </template>
+        <template v-else>
+          {{ item.name }}
+        </template>
+      </div>
+    </div>
+
+    <h2 class="mt-10 mb-5 text-2xl">Consolation Prizes (38 winners)</h2>
+    <div class="flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10">
+      <RaffleCard
+        title="10 Winners of Gift Box #9"
+        roundName="firstRound"
+        :winnersCount="10"
+        :roundWinners="firstRound"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+      <RaffleCard
+        title="10 Winners of 1,000 Gift Certificates"
+        roundName="secondRound"
+        :winnersCount="10"
+        :roundWinners="secondRound"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+    </div>
+    <div
+      class="mt-10 flex min-h-[360px] flex-col gap-y-10 md:flex-row md:gap-x-10"
+    >
+      <RaffleCard
+        title="10 Winners of 1,500 Gift Certificates"
+        roundName="thirdRound"
+        :winnersCount="10"
+        :roundWinners="thirdRound"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+      <RaffleCard
+        title="8 Winners of 2,000 Gift Certificates"
+        roundName="fourthRound"
+        :winnersCount="8"
+        :roundWinners="fourthRound"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+    </div>
+
+    <h2 class="mt-10 mb-5 text-2xl">Grand Prizes (3 winners)</h2>
+    <div class="flex flex-col gap-y-10 md:flex-row md:gap-x-10">
+      <RaffleCard
+        class="mx-auto !min-h-[200px] w-full md:w-1/2"
+        title="Trip to Boracay"
+        roundName="finalRound1"
+        :winnersCount="1"
+        :roundWinners="finalRound1"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+      <RaffleCard
+        class="mx-auto !min-h-[200px] w-full md:w-1/2"
+        title="Trip to Discovery Samal"
+        roundName="finalRound2"
+        :winnersCount="1"
+        :roundWinners="finalRound2"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+      <RaffleCard
+        class="mx-auto !min-h-[200px] w-full md:w-1/2"
+        title="Trip to Hong Kong Disneyland"
+        roundName="finalRound3"
+        :winnersCount="1"
+        :roundWinners="finalRound3"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
     </div>
 
     <UserInfoPopup
@@ -158,8 +150,8 @@ import RaffleCard from './RaffleCard.vue';
 import UserInfoPopup from './UserInfoPopup.vue';
 import ImagePopup from './ImagePopup.vue';
 
-const props = defineProps(['isLoading', 'tableData']);
-const emit = defineEmits(['update:isLoading']);
+const props = defineProps(['tableData']);
+const emit = defineEmits(['stopLoading']);
 
 const keysArrayRaffle = ['No. Of Entries', ...keysArray];
 
@@ -207,13 +199,10 @@ const totalRemainingEntries = computed(() => {
 
 onMounted(async () => {
   allEntries.value = getRaffleEntries(props.tableData);
+
   nextTick(() => {
     loadAllWinners();
   });
-
-  setTimeout(() => {
-    emit('update:isLoading', false);
-  }, 1000);
 });
 
 const formatBg = (roundName) => {
@@ -237,6 +226,8 @@ const loadAllWinners = async () => {
   } catch (error) {
     console.error('❌ Error fetching:', error);
   } finally {
+    emit('stopLoading');
+
     setTimeout(() => {
       isLoadingInfo.value = false;
     }, 1000);

@@ -34,18 +34,17 @@
         @keyup.enter="$emit('handleSearch')"
       />
 
-      <button
+      <div
         v-if="modelValue"
         @click="$emit('update:modelValue', '')"
-        type="button"
         class="text-c-beige text-md absolute end-25 top-1/2 -translate-y-1/2 cursor-pointer"
       >
         ✕
-      </button>
+      </div>
 
       <button
         type="submit"
-        class="text-warm-red bg-c-beige absolute end-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-xs px-4 py-1 text-sm hover:bg-white focus:ring-1 focus:outline-none"
+        class="text-warm-red bg-c-beige focus:outline-warm-red absolute end-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-xs px-4 py-1 text-sm hover:bg-white focus:ring-1"
         @click="$emit('handleSearch')"
       >
         Search

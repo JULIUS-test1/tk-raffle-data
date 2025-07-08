@@ -1,9 +1,6 @@
 <template>
-  <!-- <template v-if="!isLoading"> -->
   <div class="m-4">
-    <h1 class="mb-6 text-2xl font-bold md:text-3xl">
-      📊 Insights
-    </h1>
+    <h1 class="mb-12 text-2xl font-bold md:text-3xl">📊 Insights</h1>
 
     <section class="mb-10">
       <h2 class="mb-3 text-xl font-semibold">Entries per Branch</h2>
@@ -34,16 +31,11 @@
       <Bar :data="totalSalesPerBranch" :options="barOptions" />
     </section>
   </div>
-  <!-- </template> -->
-
-  <!-- <div v-else class="flex h-[600px] w-full items-center justify-center">
-    <div class="loader text-warm-red"></div>
-  </div> -->
 </template>
 
 <script setup>
 import { onMounted, computed } from 'vue';
-import { Bar, Line, Pie } from 'vue-chartjs';
+import { Bar, Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -71,10 +63,6 @@ ChartJS.register(
 
 // ✅ Props
 const props = defineProps({
-  isLoading: {
-    type: Boolean,
-    default: false,
-  },
   tableData: {
     type: Array,
     default: () => [],
@@ -109,7 +97,7 @@ const barOptions = {
   },
 };
 
-// ✅ 1. Entries per Branch
+// Entries per Branch
 const entriesPerBranch = computed(() => {
   const count = {};
   props.tableData.forEach((row) => {
@@ -129,7 +117,7 @@ const entriesPerBranch = computed(() => {
   };
 });
 
-// ✅ 2. Entries per Participant (Full Name)
+// Entries per Participant (Full Name)
 const entriesPerPerson = computed(() => {
   const count = {};
   props.tableData.forEach((row) => {
@@ -149,7 +137,7 @@ const entriesPerPerson = computed(() => {
   };
 });
 
-// ✅ 3. Total Purchase per Date
+// Total Purchase per Date
 const totalPurchasePerDate = computed(() => {
   const map = {};
 
@@ -175,7 +163,7 @@ const totalPurchasePerDate = computed(() => {
   };
 });
 
-// ✅ 4. Total & Average Purchase per Branch
+// Total & Average Purchase per Branch
 const purchasePerBranch = computed(() => {
   const total = {};
   const count = {};
@@ -207,33 +195,7 @@ const purchasePerBranch = computed(() => {
   };
 });
 
-// ✅ 5. Branch Share (Pie Chart)
-const branchShare = computed(() => {
-  const count = {};
-
-  props.tableData.forEach((row) => {
-    const branch = row.Branch || 'Unknown';
-    count[branch] = (count[branch] || 0) + 1;
-  });
-
-  return {
-    labels: Object.keys(count),
-    datasets: [
-      {
-        data: Object.values(count),
-        backgroundColor: [
-          '#60a5fa',
-          '#34d399',
-          '#f87171',
-          '#facc15',
-          '#a78bfa',
-        ],
-      },
-    ],
-  };
-});
-
-// ✅ 6. Total Sales per Branch (Bar Chart)
+// Total Sales per Branch (Bar Chart)
 const totalSalesPerBranch = computed(() => {
   const total = {};
 

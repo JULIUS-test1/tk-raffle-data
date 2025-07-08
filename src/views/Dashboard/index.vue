@@ -2,8 +2,7 @@
   <HeaderComponent v-model="activeTab" />
 
   <div class="mx-auto w-full max-w-[1600px]">
-
-    <main class="pb-20">
+    <main v-if="!isLoading" class="pb-20">
       <template v-if="activeTab == 0">
         <div
           class="bg-warm-red mx-4 mt-4 flex flex-col gap-x-4 rounded p-4 sm:mx-10"
@@ -19,22 +18,22 @@
           </div>
         </div>
 
-        <TableData :isLoading="isLoading" :filteredData="filteredData" />
+        <TableData :filteredData="filteredData" />
       </template>
 
       <RaffleData
         v-if="activeTab == 1"
-        :isLoading="isLoading"
         :tableData="tableData"
+        @stopLoading="() => (isLoading = false)"
         @update:isLoading="isLoading = $event"
       />
 
-      <PostAnalysis
-        v-if="activeTab == 2"
-        :isLoading="isLoading"
-        :tableData="tableData"
-      />
+      <Insights v-if="activeTab == 2" :tableData="tableData" />
     </main>
+
+    <div v-else class="flex h-screen w-full items-center justify-center">
+      <div class="loader text-warm-red"></div>
+    </div>
   </div>
 </template>
 
@@ -45,7 +44,7 @@ import FilterByBranch from './components/FilterByBranch.vue';
 import FilterByDate from './components/FilterByDate.vue';
 import TableData from './components/TableData.vue';
 import RaffleData from './components/RaffleData.vue';
-import PostAnalysis from './components/PostAnalysis.vue';
+import Insights from './components/Insights.vue';
 import Papa from 'papaparse';
 import { onMounted, ref, computed, watch } from 'vue';
 import { convertUTCtoPH, formatDate } from '../../utils/utils';
@@ -58,6 +57,8 @@ const searchQuery = ref('');
 const selectedBranch = ref('');
 const selectedDate = ref(null);
 
+let timeoutId = null;
+
 onMounted(() => {
   fetchData();
 });
@@ -67,18 +68,18 @@ watch(activeTab, (nV, oV) => {
     fetchData();
   }
   if (nV == 1 || nV == 2) {
-    isLoading.value = true;
+    startLoading();
   }
 });
 
 watch(searchQuery, (nV, oV) => {
-  if (!nV) {
+  if (!nV && !selectedBranch.value && !selectedDate.value) {
     return (filteredData.value = tableData.value);
   }
 });
 
 watch(selectedBranch, (nV, oV) => {
-  if (!nV) {
+  if (!nV && !searchQuery.value && !selectedDate.value) {
     return (filteredData.value = tableData.value);
   }
 
@@ -91,7 +92,7 @@ watch(selectedBranch, (nV, oV) => {
 });
 
 watch(selectedDate, (nV, oV) => {
-  if (!nV) {
+  if (!nV && !searchQuery.value && !selectedBranch.value) {
     return (filteredData.value = tableData.value);
   }
 
@@ -106,10 +107,10 @@ watch(selectedDate, (nV, oV) => {
 
 const fetchData = async () => {
   isLoading.value = true;
+  clearTimeout(timeoutId);
 
   try {
-    const url =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vQre9rhyGmyxhttVr04BT5dV95Wh5ZxIpz7dgJ9_w3kNiKHsxM4pwZjxC6xbNViSsopdraS1PJrkoGJ/pub?gid=0&single=true&output=csv';
+    const url = import.meta.env.VITE_FIREBASE_GH_URL;
 
     const response = await fetch(url);
     const csvText = await response.text();
@@ -120,13 +121,25 @@ const fetchData = async () => {
       complete: (results) => {
         tableData.value = results.data;
         filteredData.value = results.data;
-        isLoading.value = false;
       },
     });
   } catch (err) {
-    isLoading.value = false;
     console.error('Error fetching/parsing CSV:', err);
+  } finally {
+    timeoutId = setTimeout(() => {
+      isLoading.value = false;
+    }, 1000);
   }
+};
+
+const startLoading = () => {
+  isLoading.value = true;
+
+  clearTimeout(timeoutId);
+
+  timeoutId = setTimeout(() => {
+    isLoading.value = false;
+  }, 1500);
 };
 
 const uniqueBranches = computed(() => {
@@ -147,10 +160,6 @@ const handleSearch = () => {
 
     return values.includes(search);
   });
-};
-
-const handleViewInfo = (info) => {
-  console.log(1);
 };
 </script>
 
