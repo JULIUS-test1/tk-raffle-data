@@ -13,23 +13,32 @@
         ✕
       </button>
       <h2 class="mb-4 text-center text-2xl">Winner Information</h2>
-      <template v-for="(entry, index) in userInfo" :key="index">
-        <div
-          class="border1 flex min-h-12 w-full items-center"
-          v-for="(item, idx) in keysArrayRaffle"
-          :key="idx"
-        >
-          <div class="flex-1/2">{{ item }}:</div>
-          <div class="flex-1/2">
-            <span
-              v-if="item == 'Upload Receipt'"
-              class="hover:text-warm-red cursor-pointer underline"
-              @click="emit('handleViewImage', entry['Upload Receipt'])"
-            >
-              view receipt
-            </span>
-            <template v-else>{{ formatItemDisplay(item, entry) }}</template>
+      <template v-if="Array.isArray(userInfo) && userInfo.length">
+        <template v-for="(entry, index) in userInfo" :key="index">
+          <div
+            class="border1 flex min-h-12 w-full items-center"
+            v-for="(item, idx) in columnsData.slice(1)"
+            :key="idx"
+          >
+            <div class="flex-1/2">{{ item.label }}:</div>
+            <div class="flex-1/2">
+              <span
+                v-if="item.label == 'Upload Receipt'"
+                class="hover:text-warm-red cursor-pointer underline"
+                @click="emit('handleViewImage', entry[item.key])"
+              >
+                view receipt
+              </span>
+              <template v-else>
+                {{ formatItemDisplay(item.label, entry[item.key]) }}
+              </template>
+            </div>
           </div>
+        </template>
+      </template>
+      <template v-else>
+        <div class="py-8 text-center text-gray-500">
+          No user information available.
         </div>
       </template>
     </div>
@@ -38,12 +47,10 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted } from 'vue';
-import { keysArray, formatItemDisplay } from '../../../utils/utils';
+import { columnsData, formatItemDisplay } from '../../../utils/utils';
 
 const props = defineProps(['showUserInfo', 'userInfo', 'showImage']);
 const emit = defineEmits(['update:showUserInfo', 'handleViewImage']);
-
-const keysArrayRaffle = ['No. Of Entries', ...keysArray];
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);

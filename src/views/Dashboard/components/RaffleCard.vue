@@ -79,6 +79,8 @@ const formatBg = () => {
     case 'finalRound1':
     case 'finalRound2':
     case 'finalRound3':
+    case 'finalRound4':
+    case 'finalRound5':
       return '!bg-winner';
   }
 };

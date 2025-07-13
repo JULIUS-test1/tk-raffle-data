@@ -100,9 +100,9 @@
     <div class="flex flex-col gap-y-10 md:flex-row md:gap-x-10">
       <RaffleCard
         class="mx-auto !min-h-[200px] w-full md:w-1/2"
-        title="Trip to Boracay"
+        title="Discovery Coron (2)"
         roundName="finalRound1"
-        :winnersCount="1"
+        :winnersCount="2"
         :roundWinners="finalRound1"
         :isLoadingInfo="isLoadingInfo"
         @drawWinners="(n, c) => drawWinners(n, c)"
@@ -110,9 +110,9 @@
       />
       <RaffleCard
         class="mx-auto !min-h-[200px] w-full md:w-1/2"
-        title="Trip to Discovery Samal"
+        title="Discovery Boracay (2)"
         roundName="finalRound2"
-        :winnersCount="1"
+        :winnersCount="2"
         :roundWinners="finalRound2"
         :isLoadingInfo="isLoadingInfo"
         @drawWinners="(n, c) => drawWinners(n, c)"
@@ -120,10 +120,32 @@
       />
       <RaffleCard
         class="mx-auto !min-h-[200px] w-full md:w-1/2"
-        title="Trip to Hong Kong Disneyland"
+        title="Discovery Samal (2)"
         roundName="finalRound3"
-        :winnersCount="1"
+        :winnersCount="2"
         :roundWinners="finalRound3"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+    </div>
+    <div class="mt-10 flex flex-col gap-y-10 md:flex-row md:gap-x-10">
+      <RaffleCard
+        class="mx-auto !min-h-[200px] w-full md:w-1/2"
+        title="Discovery Suites"
+        roundName="finalRound4"
+        :winnersCount="1"
+        :roundWinners="finalRound4"
+        :isLoadingInfo="isLoadingInfo"
+        @drawWinners="(n, c) => drawWinners(n, c)"
+        @handleViewInfo="handleViewInfo"
+      />
+      <RaffleCard
+        class="mx-auto !min-h-[200px] w-full md:w-1/2"
+        title="Discovery Primea"
+        roundName="finalRound5"
+        :winnersCount="1"
+        :roundWinners="finalRound5"
         :isLoadingInfo="isLoadingInfo"
         @drawWinners="(n, c) => drawWinners(n, c)"
         @handleViewInfo="handleViewInfo"
@@ -145,15 +167,12 @@
 import { ref, computed, onMounted, nextTick } from 'vue';
 import { db } from '../../../firebase'; // path to your firebase.js
 import { collection, addDoc, getDocs, Timestamp } from 'firebase/firestore';
-import { keysArray } from '../../../utils/utils';
 import RaffleCard from './RaffleCard.vue';
 import UserInfoPopup from './UserInfoPopup.vue';
 import ImagePopup from './ImagePopup.vue';
 
 const props = defineProps(['tableData']);
 const emit = defineEmits(['stopLoading']);
-
-const keysArrayRaffle = ['No. Of Entries', ...keysArray];
 
 const showEntries = ref(false);
 const allEntries = ref([]);
@@ -170,6 +189,8 @@ const roundList = [
   'finalRound1',
   'finalRound2',
   'finalRound3',
+  'finalRound4',
+  'finalRound5',
 ];
 
 const getWinners = (roundName) => {
@@ -186,6 +207,8 @@ const fourthRound = getWinners('fourthRound');
 const finalRound1 = getWinners('finalRound1');
 const finalRound2 = getWinners('finalRound2');
 const finalRound3 = getWinners('finalRound3');
+const finalRound4 = getWinners('finalRound4');
+const finalRound5 = getWinners('finalRound5');
 
 const totalEntries = computed(() => allEntries.value.length);
 const totalWinnersCount = computed(() => {
@@ -239,10 +262,9 @@ const getRaffleEntries = (data) => {
   let id = 1;
 
   data.forEach((entry) => {
-    const name = entry['Full Name'];
-    const amount = Number(entry['Purchase Amount']) || 0;
-    const invoiceNumber = entry['Receipt / Invoice Number'];
-    const raffleCount = Math.floor(amount / 750);
+    const name = entry.fullName;
+    const invoiceNumber = entry.receiptNumber;
+    const raffleCount = entry.raffleEntries || 0;
 
     Array.from({ length: raffleCount }).forEach(() => {
       entries.push({
@@ -345,28 +367,14 @@ const fetchWinners = async (roundName) => {
       return update ? update : item;
     });
   } catch (error) {
-    console.error(`❌ Error fetching winners from '${roundName}':`, error);
+    console.error(`❌ Error fetch ing winners from '${roundName}':`, error);
     return [];
   }
 };
 
-const filterUserData = (data) => {
-  return data.map((entry) => {
-    const filtered = {};
-    keysArrayRaffle.forEach((key) => {
-      if (entry[key] !== undefined) {
-        filtered[key] = entry[key];
-      }
-    });
-    return filtered;
-  });
-};
-
 const handleViewInfo = (invoiceNumber) => {
-  const data = props.tableData.filter((_) => {
-    return _['Receipt / Invoice Number'] == invoiceNumber;
-  });
-  userInfo.value = filterUserData(data);
+  const data = props.tableData.filter((_) => _.receiptNumber == invoiceNumber);
+  userInfo.value = data;
 
   showUserInfo.value = true;
 };
@@ -378,20 +386,4 @@ const handleViewImage = (imgSrc) => {
   imageSrc.value = imgSrc;
   showImage.value = true;
 };
-
-// const insights = ref(null);
-// const API_KEY = import.meta.env.VITE_TALLY_API_KEY;
-
-// const fetchTallyInsight = async () => {
-//   const formId = 'wvVaGg';
-//   const res = await fetch(`https://api.tally.so/forms/wvVaGg/insights`, {
-//     headers: { Authorization: `Bearer ${API_KEY}` },
-//     'Content-Type': 'application/json',
-//   });
-//   // const res = await fetch(`https://api.tally.so/forms/${formId}/submissions`, {
-//   //   headers: { Authorization: `Bearer ${API_KEY}` },
-//   // });
-//   insights.value = await res.json();
-//   console.log(insights.value, 333);
-// };
 </script>

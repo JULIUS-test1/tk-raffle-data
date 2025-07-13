@@ -18,7 +18,7 @@
           </div>
         </div>
 
-        <TableData :filteredData="filteredData" />
+        <TableData :tableData="tableData" :filteredData="filteredData" />
       </template>
 
       <RaffleData
@@ -38,6 +38,10 @@
 </template>
 
 <script setup>
+import { onMounted, ref, computed, watch } from 'vue';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
+import { formatDate, convertDate } from '../../utils/utils';
 import HeaderComponent from './components/HeaderComponent.vue';
 import SearchInput from './components/SearchInput.vue';
 import FilterByBranch from './components/FilterByBranch.vue';
@@ -45,9 +49,6 @@ import FilterByDate from './components/FilterByDate.vue';
 import TableData from './components/TableData.vue';
 import RaffleData from './components/RaffleData.vue';
 import Insights from './components/Insights.vue';
-import Papa from 'papaparse';
-import { onMounted, ref, computed, watch } from 'vue';
-import { convertUTCtoPH, formatDate } from '../../utils/utils';
 
 const isLoading = ref(false);
 const activeTab = ref(0);
@@ -62,6 +63,23 @@ let timeoutId = null;
 onMounted(() => {
   fetchData();
 });
+
+const fetchData = async () => {
+  isLoading.value = true;
+  clearTimeout(timeoutId);
+
+  const querySnapshot = await getDocs(collection(db, 'submissions'));
+  const data = querySnapshot.docs.map((doc) => ({ ...doc.data() }));
+
+  if (data) {
+    tableData.value = data;
+    filteredData.value = data;
+  }
+
+  timeoutId = setTimeout(() => {
+    isLoading.value = false;
+  }, 1000);
+};
 
 watch(activeTab, (nV, oV) => {
   if (nV == 0) {
@@ -86,8 +104,8 @@ watch(selectedBranch, (nV, oV) => {
   searchQuery.value = '';
   selectedDate.value = null;
 
-  filteredData.value = tableData.value.filter((entry) => {
-    return entry['Branch']?.trim() === selectedBranch.value.trim();
+  filteredData.value = tableData.value.filter((item) => {
+    return item.branch?.trim() === selectedBranch.value.trim();
   });
 });
 
@@ -100,37 +118,15 @@ watch(selectedDate, (nV, oV) => {
   selectedBranch.value = '';
 
   filteredData.value = tableData.value.filter((item) => {
-    const submittedDate = convertUTCtoPH(item['Submitted at']).split(' ')[0];
-    return submittedDate === formatDate(nV);
+    const submittedAt = convertDate(item.submittedAt).split(' ')[0];
+    return submittedAt === formatDate(nV);
   });
 });
 
-const fetchData = async () => {
-  isLoading.value = true;
-  clearTimeout(timeoutId);
-
-  try {
-    const url = import.meta.env.VITE_FIREBASE_GH_URL;
-
-    const response = await fetch(url);
-    const csvText = await response.text();
-
-    Papa.parse(csvText, {
-      header: true, // assumes first row is column names
-      skipEmptyLines: true,
-      complete: (results) => {
-        tableData.value = results.data;
-        filteredData.value = results.data;
-      },
-    });
-  } catch (err) {
-    console.error('Error fetching/parsing CSV:', err);
-  } finally {
-    timeoutId = setTimeout(() => {
-      isLoading.value = false;
-    }, 1000);
-  }
-};
+const uniqueBranches = computed(() => {
+  const allBranches = tableData.value.map((entry) => entry.branch);
+  return [...new Set(allBranches)].filter(Boolean); // remove duplicates and falsy values
+});
 
 const startLoading = () => {
   isLoading.value = true;
@@ -141,11 +137,6 @@ const startLoading = () => {
     isLoading.value = false;
   }, 1500);
 };
-
-const uniqueBranches = computed(() => {
-  const allBranches = tableData.value.map((entry) => entry['Branch']);
-  return [...new Set(allBranches)].filter(Boolean); // remove duplicates and falsy values
-});
 
 const handleSearch = () => {
   const search = searchQuery.value.toLowerCase().trim();
@@ -162,5 +153,3 @@ const handleSearch = () => {
   });
 };
 </script>
-
-<style lang="scss" scoped></style>

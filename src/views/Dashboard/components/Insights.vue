@@ -100,16 +100,18 @@ const barOptions = {
 // Entries per Branch
 const entriesPerBranch = computed(() => {
   const count = {};
+
   props.tableData.forEach((row) => {
-    const branch = row.Branch || 'Unknown';
-    count[branch] = (count[branch] || 0) + 1;
+    const branch = row.branch || 'Unknown';
+    const entries = Number(row.raffleEntries) || 0;
+    count[branch] = (count[branch] || 0) + entries;
   });
 
   return {
     labels: Object.keys(count),
     datasets: [
       {
-        label: 'Entries',
+        label: 'Raffle Entries',
         data: Object.values(count),
         backgroundColor: '#3b82f6',
       },
@@ -120,16 +122,18 @@ const entriesPerBranch = computed(() => {
 // Entries per Participant (Full Name)
 const entriesPerPerson = computed(() => {
   const count = {};
+
   props.tableData.forEach((row) => {
-    const name = row['Full Name'] || row.Name || 'Unknown';
-    count[name] = (count[name] || 0) + 1;
+    const name = row.fullName || 'Unknown';
+    const entries = Number(row.raffleEntries) || 0;
+    count[name] = (count[name] || 0) + entries;
   });
 
   return {
     labels: Object.keys(count),
     datasets: [
       {
-        label: 'Entries',
+        label: 'Raffle Entries',
         data: Object.values(count),
         backgroundColor: '#34d399',
       },
@@ -142,13 +146,15 @@ const totalPurchasePerDate = computed(() => {
   const map = {};
 
   props.tableData.forEach((row) => {
-    const date = row['Date of Purchase'] || 'Unknown';
-    const amount = parseFloat(row['Purchase Amount'] || '0') || 0;
+    const date = row.dateOfPurchase || 'Unknown';
+    const amount = parseFloat(row.purchaseAmount) || 0;
     if (!map[date]) map[date] = 0;
     map[date] += amount;
   });
 
-  const sortedDates = Object.keys(map).sort();
+  const sortedDates = Object.keys(map).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
 
   return {
     labels: sortedDates,
@@ -169,8 +175,8 @@ const purchasePerBranch = computed(() => {
   const count = {};
 
   props.tableData.forEach((row) => {
-    const branch = row.Branch || 'Unknown';
-    const amount = parseFloat(row['Purchase Amount'] || '0') || 0;
+    const branch = row.branch || 'Unknown';
+    const amount = parseFloat(row.purchaseAmount) || 0;
 
     total[branch] = (total[branch] || 0) + amount;
     count[branch] = (count[branch] || 0) + 1;
@@ -188,7 +194,7 @@ const purchasePerBranch = computed(() => {
       },
       {
         label: 'Average Purchase',
-        data: branches.map((b) => (total[b] / count[b]).toFixed(2)),
+        data: branches.map((b) => +(total[b] / count[b]).toFixed(2)),
         backgroundColor: '#f472b6',
       },
     ],
@@ -200,8 +206,8 @@ const totalSalesPerBranch = computed(() => {
   const total = {};
 
   props.tableData.forEach((row) => {
-    const branch = row.Branch || 'Unknown';
-    const amount = parseFloat(row['Purchase Amount'] || '0') || 0;
+    const branch = row.branch || 'Unknown';
+    const amount = parseFloat(row.purchaseAmount) || 0;
     total[branch] = (total[branch] || 0) + amount;
   });
 

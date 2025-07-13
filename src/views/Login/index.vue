@@ -11,23 +11,25 @@
     </div>
     <div class="bg-c-beige min-h-full w-full p-8 lg:w-[1200px] lg:p-18">
       <div class="relative mx-auto w-full max-w-md">
-        <img src="/src/assets/tpk-logo-red.png" alt="tpk-logo" class="w-60" />
+        <img
+          src="/src/assets/tpk-logo-red.png"
+          alt="tpk-logo"
+          class="mx-auto w-60"
+        />
 
         <h1 class="text-warm-red font-sh mt-20 text-5xl">Welcome,</h1>
         <h2 class="font-sh text-maroon mb-12 text-2xl">Glad to see you!</h2>
 
         <form @submit.prevent="handleLogin">
-          <div class="">
-            <label class="text-maroon mb-2 block font-medium">Email</label>
-            <input
-              v-model="email"
-              type="text"
-              required
-              class="focus:ring-c-brass text-maroon w-full rounded bg-[#f4f2ec] px-4 py-3 focus:ring-2 focus:outline-none"
-              placeholder="you@example.com"
-              @input="error = ''"
-            />
-          </div>
+          <label class="text-maroon mb-2 block font-medium">Email</label>
+          <input
+            v-model="email"
+            type="text"
+            required
+            class="focus:ring-c-brass text-maroon w-full rounded bg-[#f4f2ec] px-4 py-3 focus:ring-2 focus:outline-none"
+            placeholder="you@example.com"
+            @input="error = ''"
+          />
 
           <div class="relative mt-7">
             <label class="text-maroon mb-2 block font-medium">Password</label>
@@ -42,7 +44,7 @@
 
             <!-- Toggle eye icon -->
             <div
-              class="absolute top-[40px] right-3 cursor-pointer text-gray-600 focus:outline-none"
+              class="absolute top-[45px] right-3 cursor-pointer text-gray-600 focus:outline-none"
               @click="isPasswordVisible = !isPasswordVisible"
             >
               <!-- Eye Icon (Show) -->
@@ -110,13 +112,6 @@
       </div>
     </div>
   </div>
-
-  <div
-    v-if="isChecking"
-    class="fixed inset-0 flex h-screen w-full items-center justify-center bg-gray-200/30 backdrop-blur-xs backdrop-saturate-150"
-  >
-    <div class="loader-spinner"></div>
-  </div>
 </template>
 
 <script setup>
@@ -128,54 +123,12 @@ const email = ref('');
 const password = ref('');
 const error = ref('');
 const isPasswordVisible = ref(false);
-const isChecking = ref(false);
 
 const handleLogin = async () => {
-  isChecking.value = true;
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
-    setTimeout(() => {
-      isChecking.value = false;
-    }, 1000);
   } catch (err) {
-    setTimeout(() => {
-      error.value = 'Invalid email or password.';
-      isChecking.value = false;
-    }, 1000);
+    error.value = 'Invalid email or password.';
   }
 };
 </script>
-
-<style scoped>
-.loader-spinner {
-  width: 50px;
-  aspect-ratio: 1;
-  display: grid;
-  -webkit-mask: conic-gradient(from 15deg, #0000, #000);
-  animation: l26 1s infinite steps(12);
-}
-.loader-spinner,
-.loader-spinner:before,
-.loader-spinner:after {
-  background:
-    radial-gradient(closest-side at 50% 12.5%, #d14124 96%, #0000) 50% 0/20% 80%
-      repeat-y,
-    radial-gradient(closest-side at 12.5% 50%, #d14124 96%, #0000) 0 50%/80% 20%
-      repeat-x;
-}
-.loader-spinner:before,
-.loader-spinner:after {
-  content: '';
-  grid-area: 1/1;
-  transform: rotate(30deg);
-}
-.loader-spinner:after {
-  transform: rotate(60deg);
-}
-
-@keyframes l26 {
-  100% {
-    transform: rotate(1turn);
-  }
-}
-</style>
