@@ -247,10 +247,9 @@ const pagesToShow = computed(() => {
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 });
 
-// Page changer
-function goToPage(page) {
+const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
   }
-}
+};
 </script>

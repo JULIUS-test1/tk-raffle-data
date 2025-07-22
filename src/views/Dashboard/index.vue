@@ -15,6 +15,8 @@
               :uniqueBranches="uniqueBranches"
             />
             <FilterByDate v-model="selectedDate" />
+
+            <DownloadBtn :data="tableData" />
           </div>
         </div>
 
@@ -41,11 +43,12 @@
 import { onMounted, ref, computed, watch } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { formatDate, convertDate } from '../../utils/utils';
+import { formatDate } from '../../utils/utils';
 import HeaderComponent from './components/HeaderComponent.vue';
 import SearchInput from './components/SearchInput.vue';
 import FilterByBranch from './components/FilterByBranch.vue';
 import FilterByDate from './components/FilterByDate.vue';
+import DownloadBtn from './components/DownloadBtn.vue';
 import TableData from './components/TableData.vue';
 import RaffleData from './components/RaffleData.vue';
 import Insights from './components/Insights.vue';
@@ -118,8 +121,7 @@ watch(selectedDate, (nV, oV) => {
   selectedBranch.value = '';
 
   filteredData.value = tableData.value.filter((item) => {
-    const submittedAt = convertDate(item.submittedAt).split(' ')[0];
-    return submittedAt === formatDate(nV);
+    return formatDate(item.dateOfPurchase) === formatDate(nV);
   });
 });
 

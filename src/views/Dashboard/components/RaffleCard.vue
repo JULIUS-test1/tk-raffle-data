@@ -41,7 +41,7 @@
       class="flex h-[150px] w-full items-center justify-center md:h-[calc(100%-50px)]"
     >
       <div
-        class="bg-warm-red-h hover:bg-warm-red cursor-pointer rounded-lg px-6 py-2 font-bold text-white shadow"
+        class="bg-warm-red-h hover:bg-warm-red cursor-pointer rounded-lg px-6 py-2 tracking-wide text-white shadow"
         @click="$emit('drawWinners', roundName, winnersCount)"
       >
         Generate {{ winnersCount }}
